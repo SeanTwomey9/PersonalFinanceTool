@@ -1,0 +1,14 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+
+# Documentation files #
+#######################
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.gz
+*.toc

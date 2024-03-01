@@ -1,0 +1,257 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{longtable}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\urlstyle{same}
+
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C
+}
+\lstset{style=CStyle}
+
+\title{Personal Finance Tool Software Requirements Specification}
+\author{Sean Twomey}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Revision History}
+
+\begin{longtable}{|p{2cm}|p{2cm}|p{5cm}|p{3cm}|}
+    \hline
+    \textbf{Revision} & \textbf{Date} & \textbf{Revision Description} & \textbf{Author} \\
+    \hline
+    \texttt{v1.0.0} & 03/01/2024 & Initial release of requirements set. & Sean Twomey \\
+    \hline
+    \caption{Table containing revision history of this document.}
+\end{longtable}
+
+\section{Acronym Table}
+
+\begin{longtable}{|p{2cm}|p{10cm}|}
+    \hline
+    \textbf{Acronym} & \textbf{Full Description} \\
+    \hline
+    SRS & Software Requirements Specification \\
+    \hline
+    PFT & Personal Finance Tool \\
+    \hline
+    \caption{Table containing acronyms/abbreviations used throughout document and their full descriptions.}
+\end{longtable}
+
+
+\section{Introduction}
+
+The Software Requirements Specification (SRS) should ultimately outline what this piece of software will do and how it will fulfill the needs of all stakeholders. This section will outline preliminary information about the Personal Finance Tool (PFT) to help introduce a user or stakeholder to the application. After
+reading this section it should be clear the purpose of the application, who it's intended for use by, and what it should be used for.
+
+\subsection{Purpose}
+
+For \texttt{v1.0.0} the purpose of the PFT is to help a user understand their financial picture better with regards to the funds they have available, the upcoming bills they must pay, and the amount that they have leftover to spend as they see fit.
+This application should allow a user to realize how much of their available money can be distributed to other spending purposes/goals as opposed to the portion of their funds that are tied up in meeting obligatory payments. \\
+\\
+This application is intended for use by anybody who has money available to them, reoccuring bills, and spending goals. Essentially anybody who wishes to differentiate between
+the total funds they have available to them, the funds that are reserved for obligatory payments, and then the funds they have available for meeting their other spending goals. 
+
+\subsection{Intended Audience}
+
+This SRS is meant for use by developers, testers, product/project managers, sales and marketing individuals, or anybody else that would like to gain a better understanding of the requirements for the tool. After reading this document, a contributor or stakeholder should understand
+the purpose of the PFT and functionalities the application possesses.
+
+\subsection{Intended Use}
+
+The primary use of this application will consist of on a month-by-month basis, a user managing their available funds throughout the month. They will enter into the application their available funds, their obligatory bills, whether or not the bills have been paid, and more.
+The user will use the tool to understand how much money they have available, how much of that money needs to be allocated for upcoming bills, when these bills are due, and how much money is available for other spending purposes.
+This application is meant for use by anyone who has money available to them, reoccurring bills, and wishes to understand their financial picture better.
+
+\subsection{Product Scope}
+
+The scope of the PFT is to take the form of a desktop-based applicaion which initially allow a user to input their total available funds and the bills they must pay with associated data. The tool will then allow a user to select which of the bills they have paid or have yet to pay thoughout the month.
+The tool will compute the amount of money they have available for other spending purposes as the month goes on. It will also offer a financial picture to the user based on saved information the user has entered, allowing them to understand
+their financial situation over time.
+
+\subsection{Assumptions and Dependencies}
+
+It's assumed that this application will be developed with a modern programming language and framework. It's also assumed that users of the application
+will have access to a computer where they can run the application and enter their personal financial information. This application does not have any dependencies on anything other than the technical stack that will be used to create it.
+
+\section{Prompt User For Financial Information On First Launch}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1 & Prompt User For Financial Information On First Launch & The PFT shall prompt the user to enter their financial information the first time it is launched. \\
+    \hline
+\end{longtable}
+
+\subsection{Prompt User For Total Available Money}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.1 & Prompt User For Total Available Money & The PFT shall prompt the user to enter the total amount of money they have upon first launch. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Save Total Available Money To A Configuration File}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.1.1 & Save Total Available Money To A Configuration File & The PFT shall save the total available amount of money entered by the user to a configuration file. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Enforce A Positive Dollar Amount Is Entered}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.1.2 & Enforce A Positive Dollar Amount Is Entered & The PFT shall make sure that the total amount of money entered is a positive value to two decimal places. If a user enters a negative number, an appropriate error message will be generated and the user will need to re-attempt entering the value. \\
+    \hline
+\end{longtable}
+
+\subsection{Prompt User For Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.2 & Prompt User For Bills & The PFT shall prompt the user to enter their bills in the form of a merchant and a dollar amount owed. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Save Bills To A Configuration File}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.2.1 & Save Bills To A Configuration File & The PFT shall save the bills entered by the user to a configuration file in the form of merchant and amount owed combinations. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Enforce A Non-Empty Payee Is Entered}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.2.2 & Enforce A Non-Empty Payee Is Entered & The PFT shall make sure that the payee for each bill is not an empty string. If a user attempts to save a bill with an empty payee, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
+    \hline
+\end{longtable}
+
+\subsubsection{Enforce A Non-Empty And Positive Amount Owed Is Entered}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.2.3 & Enforce A Non-Empty And Positive Amount Owed Is Entered & The PFT shall make sure that the amount owed for each bill is not empty and is a positive value. If a user attempts to save a bill with an empty or negative amount owed, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
+    \hline
+\end{longtable}
+
+\subsection{Allow User To Finish Entering Financial Information}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F1.3 & Allow User To Finish Entering Financial Information & The PFT shall have a control which allows the user to finish the process of entering their financial information. \\
+    \hline
+\end{longtable}
+
+\section{Display User's Financial Dashboard}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2 & Display User's Financial Dashboard & The PFT shall use the saved financial information to generate a dashboard which displays the user's financial information. \\
+    \hline
+\end{longtable}
+
+\subsection{Display User's Total Money Available}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.1 & Display User's Total Money Available & The PFT shall display the saved total amount of money available to the user.  \\
+    \hline
+\end{longtable}
+
+\subsection{Display User's Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.2 & Display User's Bills & The PFT shall display the saved bills in the form of a payee and amount owed to the user.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Display Whether Or Not Each Bill Needs To Be Paid}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.3 & Display Whether Or Not Each Bill Needs To Be Paid & The PFT shall display whether or not each bill needs to be paid.  \\
+    \hline
+\end{longtable}
+
+\section{Allow User To Adjust Financial Dashboard}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F3 & Allow User To Adjust Financial Dashboard & The PFT shall allow the user to adjust their financial dashboard.  \\
+    \hline
+\end{longtable}
+
+\end{document}
