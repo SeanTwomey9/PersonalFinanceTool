@@ -130,19 +130,10 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F1.1 & Prompt User For Total Available Money & The PFT shall prompt the user to enter the total amount of money they have upon first launch. \\
+    F1.1 & Prompt User For Total Available Money & The PFT shall initially prompt the user to enter the total amount of money they have upon first launch and then transition into prompting them for their bills. \\
     \hline
 \end{longtable}
 
-\subsubsection{Save Total Available Money To A Configuration File}
-
-\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
-    \hline
-    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
-    \hline
-    F1.1.1 & Save Total Available Money To A Configuration File & The PFT shall save the total available amount of money entered by the user to a configuration file. \\
-    \hline
-\end{longtable}
 
 \subsubsection{Enforce A Positive Dollar Amount Is Entered}
 
@@ -160,19 +151,10 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F1.2 & Prompt User For Bills & The PFT shall prompt the user to enter their bills in the form of a merchant and a dollar amount owed. \\
+    F1.2 & Prompt User For Bills & The PFT shall prompt the user to enter their bills in the form of a payee, dollar amount owed and whether or not the bill has been paid following the request for the total amount of money available. \\
     \hline
 \end{longtable}
 
-\subsubsection{Save Bills To A Configuration File}
-
-\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
-    \hline
-    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
-    \hline
-    F1.2.1 & Save Bills To A Configuration File & The PFT shall save the bills entered by the user to a configuration file in the form of merchant and amount owed combinations. \\
-    \hline
-\end{longtable}
 
 \subsubsection{Enforce A Non-Empty Payee Is Entered}
 
@@ -180,7 +162,7 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F1.2.2 & Enforce A Non-Empty Payee Is Entered & The PFT shall make sure that the payee for each bill is not an empty string. If a user attempts to save a bill with an empty payee, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
+    F1.2.1 & Enforce A Non-Empty Payee Is Entered & The PFT shall make sure that the payee for each bill is not an empty string. If a user attempts to save a bill with an empty payee, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
     \hline
 \end{longtable}
 
@@ -190,17 +172,47 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F1.2.3 & Enforce A Non-Empty And Positive Amount Owed Is Entered & The PFT shall make sure that the amount owed for each bill is not empty and is a positive value. If a user attempts to save a bill with an empty or negative amount owed, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
+    F1.2.2 & Enforce A Non-Empty And Positive Amount Owed Is Entered & The PFT shall make sure that the amount owed for each bill is not empty and is a positive value. If a user attempts to save a bill with an empty or negative amount owed, an appropriate error message will be generated and the user will need to re-attempt entering the bill. \\
     \hline
 \end{longtable}
 
-\subsection{Allow User To Finish Entering Financial Information}
+\subsection{Allow Users To Confirm Their Initial Financial Information}
 
 \begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F1.3 & Allow User To Finish Entering Financial Information & The PFT shall have a control which allows the user to finish the process of entering their financial information. \\
+    F2 & Allow User To Confirm Their Initial Financial Information & The PFT shall allow the user to confirm their initial financial information when prompted on application start-up.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow Users To Cancel Inputting Their Initial Financial Information}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.1 & Allow Users To Cancel Inputting Their Initial Financial Information & The PFT shall allow the user to cancel inputting their intial financial information using a "Cancel" control which will not save results to the configuration file and will close the application.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow Users To Continue Inputting Their Initial Financial Information}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.2 & Allow Users To Continue Inputting Their Initial Financial Information & The PFT shall allow the user to continue inputting their intial financial information using a "Continue" control which will continue prompting the user to enter another bill.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow Users To Save Their Initial Financial Information}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F2.2 & Allow User To Save Their Initial Financial Information & The PFT shall allow the user to save their initial financial information once finished entering it, using a "Save" control which will save the results to the configuration file.  \\
     \hline
 \end{longtable}
 
@@ -210,7 +222,7 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F2 & Display User's Financial Dashboard & The PFT shall use the saved financial information to generate a dashboard which displays the user's financial information. \\
+    F3 & Display User's Financial Dashboard & The PFT shall use the configuration file to generate a dashboard which displays the user's financial information. \\
     \hline
 \end{longtable}
 
@@ -220,7 +232,7 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F2.1 & Display User's Total Money Available & The PFT shall display the saved total amount of money available to the user.  \\
+    F3.1 & Display User's Total Money Available & The PFT shall display the saved total amount of money available to the user.  \\
     \hline
 \end{longtable}
 
@@ -230,7 +242,7 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F2.2 & Display User's Bills & The PFT shall display the saved bills in the form of a payee and amount owed to the user.  \\
+    F3.2 & Display User's Bills & The PFT shall display the saved bills in the form of a payee and amount owed to the user.  \\
     \hline
 \end{longtable}
 
@@ -240,7 +252,7 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F2.3 & Display Whether Or Not Each Bill Needs To Be Paid & The PFT shall display whether or not each bill needs to be paid.  \\
+    F3.3 & Display Whether Or Not Each Bill Needs To Be Paid & The PFT shall display whether or not each bill needs to be paid.  \\
     \hline
 \end{longtable}
 
@@ -250,7 +262,147 @@ will have access to a computer where they can run the application and enter thei
     \hline
     \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
     \hline
-    F3 & Allow User To Adjust Financial Dashboard & The PFT shall allow the user to adjust their financial dashboard.  \\
+    F4 & Allow User To Adjust Financial Dashboard & The PFT shall allow the user to adjust their financial dashboard.  \\
+    \hline
+\end{longtable}
+
+\subsection{Allow User To Adjust Total Money Available}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.1 & Allow User To Adjust Total Money Available & The PFT shall allow the user to adjust the total amount of money they have available.  \\
+    \hline
+\end{longtable}
+
+\subsection{Allow User To Adjust Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.2 & Allow User To Adjust Bills & The PFT shall allow the user to adjust the bills they have.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow User To Add Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.2.1 & Allow User To Add Bills & The PFT shall allow the user to create new bills that they have.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow User To Edit Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.2.2 & Allow User To Edit Bills & The PFT shall allow the user to edit bills that they have by modifying the payee and amount owed.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow User To Remove Bills}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.2.3 & Allow User To Remove Bills & The PFT shall allow the user to remove pre-existing bills that they have created.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow User To Edit Whether Or Not Each Bill Has Been Paid}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F4.2.4 & Allow User To Adjust Whether Or Not Each Bill Has Been Paid & The PFT shall allow the user to change whether or not each of their bills have been paid.  \\
+    \hline
+\end{longtable}
+
+\subsection{Allow Users To Confirm Their Adjustments}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F5 & Allow User To Confirm Their Adjustments & The PFT shall allow the user to confirm their additions, edits and removals from the dashboard.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow Users To Cancel Their Adjustments}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F5.1 & Allow User To Cancel Their Adjustments & The PFT shall allow the user to cancel their additions, edits and removals from the dashboard using a "Cancel" control which will not save results to the configuration file.  \\
+    \hline
+\end{longtable}
+
+\subsubsection{Allow Users To Save Their Adjustments}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F5.2 & Allow User To Save Their Adjustments & The PFT shall allow the user to save their additions, edits and removals from the dashboard using a "Save" control which will save the results to the configuration file.  \\
+    \hline
+\end{longtable}
+
+\section{Allow Users To Exit The PFT}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F6& Allow Users To Exit The PFT & The PFT shall allow the user to exit the application using an "X" control.  \\
+    \hline
+\end{longtable}
+
+\section{Handle Configuration File Existence}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F7& Handle Configuration File Existence & The PFT shall handle the initial creation, checking for existence of and recreation of the configuration file in the event of its absence.  \\
+    \hline
+\end{longtable}
+
+\subsection{Create Initial Configuration File In Default Path Following Initial Financial Information Collection}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F7.1 & Create Initial Configuration File In Default Path Following Initial Financial Information Collection & The PFT shall create the configuration file containing the entered initial financial information at a default path on the user's machine.  \\
+    \hline
+\end{longtable}
+
+\subsection{Upon Subsequent Application Launches Check For Existence Of Configuration File}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F7.2 & Upon Subsequent Application Launches Check For Existence Of Configuration File & The PFT shall check for the existence of the configuration file on subsequent launches of the application.  \\
+    \hline
+\end{longtable}
+
+\subsection{Generate A Default Configuration File At Default Path If Not Found On Subsequent Launches}
+
+\begin{longtable}{|p{2cm}|p{6cm}| p{6cm}|}
+    \hline
+    \textbf{Requirement Number} & \textbf{Requirement Name} & \textbf{Requirement Text}\\
+    \hline
+    F7.3 & Generate A Default Configuration File At Default Path If Not Found On Subsequent Launches & The PFT shall generate a default configuration file at the default path on subsequent launches of the application if the file was not found.  \\
     \hline
 \end{longtable}
 
