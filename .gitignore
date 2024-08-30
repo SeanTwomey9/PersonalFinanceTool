@@ -12,3 +12,15 @@
 *.out
 *.gz
 *.toc
+
+# Build files #
+###############
+
+Makefile
+*.o
+moc_*
+*.user
+.qmake.stash
+.qtc*
+build/
+*.app
