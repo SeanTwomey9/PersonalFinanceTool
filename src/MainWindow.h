@@ -23,6 +23,20 @@ public:
     MainWindow();
     ~MainWindow();
 
+signals:
+
+    /**
+     * @brief Emitted when the application needs to be terminated.
+     */
+    void conditionToTerminateMet();
+
+public slots:
+
+    /**
+     * @brief Terminates the application.
+     */
+    void terminateApplication();
+
 private:
 
     /**

@@ -15,9 +15,12 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QApplication>
 
 MainWindow::MainWindow()
 {
+    connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
+
     if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
     {
         // Read config file and create UI
@@ -35,6 +38,11 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::terminateApplication()
+{
+    QCoreApplication::quit();
 }
 
 void MainWindow::welcomeFirstTimeUser()
@@ -64,6 +72,8 @@ void MainWindow::welcomeFirstTimeUser()
         case QMessageBox::Close:
         {
             // Exit application
+            qDebug() << "USER PRESSED CLOSE";
+            emit conditionToTerminateMet();
             break;
         }
 
@@ -93,5 +103,6 @@ void MainWindow::askForTotalAmountAvailable()
     else
     {
         // Exit application
+        emit conditionToTerminateMet();
     }
 }
