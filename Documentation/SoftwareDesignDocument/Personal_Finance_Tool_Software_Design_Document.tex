@@ -6,6 +6,8 @@
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{longtable}
+
 \hypersetup{
     colorlinks=true,
     linkcolor=blue,
@@ -53,5 +55,134 @@
 \newpage
 
 \section{Introduction}
+
+This Software Design Document (SDD) provides an overview of the design and architectural choices of the Personal Finance Tool (PFT).
+As opposed to the Software Requirement Specification (SRS) which details more of the requirements and functionality of the tool, this document will cover broad
+areas of the system architecture, data design, component design, and user interface design. 
+
+\subsection{Purpose}
+
+The SDD shall describe the design choices of the application, the technologies used for implementation, and any other important design decisions which went into the PFT. Together with the SDD, a user should be able to develop a solid understanding
+of the requirements and design which went into the PFT.
+
+\subsection{Scope}
+
+The scope of this document will be contained to the PFT itself, and its various uses. For example, it will cover design of the application and the reasoning behind it. It will also cover the rationale for the design choices, in the context of how they will impact a user of the application.
+
+\subsection{Overview}
+
+This document has the following overarching sections each with their respective subsections:
+
+\begin{enumerate}
+    \item Introduction
+    \begin{itemize}
+        \item Introduces the reader to the document and what they can expect from it.
+    \end{itemize}
+    \item System Overview
+    \begin{itemize}
+        \item Provides a general description of the application's functionality, context, and design.
+    \end{itemize}
+    \item System Architecture
+    \begin{itemize}
+        \item Defines and describes the application's overarching architecture, subsystems of the top-level system if applicable, and the rationale for the design.
+    \end{itemize}
+    \item Data Design
+    \begin{itemize}
+        \item Describes how information is interpreted, stored, and transformed into appropriate data structures within the PFT.
+    \end{itemize}
+    \item Component Design
+    \begin{itemize}
+        \item Delves into each component of the application and how they are created/broken down into objects.
+    \end{itemize}
+    \item User Interface Design
+    \begin{itemize}
+        \item Describes the user interface (UI) and user experience (UX) which the PFT will provide.
+    \end{itemize}
+    \item Requirements Matrix
+    \begin{itemize}
+        \item Traces requirements from the accompanying Software Requirement Specification (SRS) to components and data structures in the PFT.
+    \end{itemize}
+    \item Appendices
+    \begin{itemize}
+        \item Provides any additional information which may supplement the SDD.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Reference Material}
+
+There are no reference materials at this time, however this section will be updated if any are utilized for this project.
+
+\subsection{Definitions And Acronyms}
+
+\begin{longtable}{| p{6cm} | p{2cm} |}
+    \hline
+    \textbf{Definition} & \textbf{Acronym} \\
+    \hline
+    Software Design Document & SDD \\
+    \hline
+    Personal Finance Tool & PFT \\
+    \hline
+    User Interface & UI \\
+    \hline
+    User Experience & UX \\
+    \hline
+    Software Requirement Specification & SRS \\
+    \hline
+\end{longtable}
+
+\section{System Overview}
+
+The PFT will be an application which reads, writes, and stores data via a configuration file and ultimately populates a user interface using the contents of the file. It will allow a user to enter 
+important financial information such as their total money available, their monthly or annual bills with amounts owed and due dates, and how much money is allocated towards said bills vs how much is available for other spending. This information will be displayed to the user,
+and the user will have options to add, remove, or edit information from their financial picture. 
+
+\section{System Architecture}
+
+This section will provide a high-level overview of the PFT, its responsibilities, how those responsibilities were decomposed to subsystems, and how those subsystems were decomposed.
+\subsection{Architectural Design}
+
+The top-level responsibilities of the PFT are:
+
+\begin{enumerate}
+    \item Create, populate, save, and read from a configuration file.
+    \item Provide a UI allowing a user to view and edit their financial details.
+\end{enumerate}
+
+These responsibilities will be broken down into subsystems of Configuration File (CF) and UI.
+
+\subsubsection{Configuration File}
+
+The CF provides several key functionalities which the PFT will leverage. Initially, the CF will allow the user to save their financial data. As the application does not currently use a database or alternative method of data storage,
+the CF will fulfill this functionality. Also, the CF will allow the PFT to launch in a specific state depending on the contents of the CF.
+
+\subsubsection{User Interface}
+
+The UI will allow the user to view and interact with their financial information. They will be able to perform key actions such as updating their available balance, add/edit/remove bills, allocate available funds for bills, and more.  
+
+\subsection{Decomposition Description}
+
+\subsection{Design Rationale}
+
+\section{Data Design}
+
+\subsection{Data Description}
+
+\subsection{Data Dictionary}
+
+\section{Component Design}
+
+\section{User Interface Design}
+
+\subsection{Overview Of User Interface}
+
+\subsection{Screen Images}
+
+\subsection{Screen Objects and Actions}
+
+\section{Requirements Matrix}
+
+\section{Appendices}
+
+
 
 \end{document}
