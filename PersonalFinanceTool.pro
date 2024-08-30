@@ -27,13 +27,19 @@ TARGET = PersonalFinanceTool
 # The directory where the binary is generated
 DESTDIR = ./bin
 
+OBJECTS_DIR = /obj
+MOC_DIR = ./moc
+UI_DIR = ./ui
+
 SOURCES += \
     src/Bill.cpp \
+    src/BillWidget.cpp \
     src/main.cpp \
     src/MainWindow.cpp
 
 HEADERS += \
     src/Bill.h \
+    src/BillWidget.h \
     src/MainWindow.h
 
 OTHER_FILES += \

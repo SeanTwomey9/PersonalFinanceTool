@@ -2,15 +2,13 @@
 #   File name:          MainWindow.cpp
 #   Created on:         08/30/2024
 #   Author:             stwomey
-#
 #   Description:        Header file for the MainWindow
-#
 #   Change History:     See https://github.com/SeanTwomey9/PersonalFinanceTool
 #   Relative Location:  PersonalFinanceTool/src/
-#
 ##################################################################################*/
 
 #include "MainWindow.h"
+#include "BillWidget.h"
 
 #include <QFile>
 #include <QMessageBox>
@@ -19,8 +17,10 @@
 
 MainWindow::MainWindow()
 {
+    // Connection to terminate application when certain conditions are met
     connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
 
+    // If the config file exists in the expected directory
     if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
     {
         // Read config file and create UI
@@ -42,6 +42,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::terminateApplication()
 {
+    // Terminate the application
     QCoreApplication::quit();
 }
 
@@ -72,7 +73,6 @@ void MainWindow::welcomeFirstTimeUser()
         case QMessageBox::Close:
         {
             // Exit application
-            qDebug() << "USER PRESSED CLOSE";
             emit conditionToTerminateMet();
             break;
         }
@@ -98,6 +98,9 @@ void MainWindow::askForTotalAmountAvailable()
     {
         // Store the total amount available entered, if nothing was entered this defaults to $0.00
         m_amountAvailable = amountAvailable;
+        BillWidget *billWidget = new BillWidget(this);
+        billWidget->show();
+
     }
 
     else

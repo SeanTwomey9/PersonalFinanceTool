@@ -2,15 +2,24 @@
 #   File name:          Bill.cpp
 #   Created on:         08/30/2024
 #   Author:             stwomey
-#
 #   Description:        Source file for a Bill
-#
 #   Change History:     See https://github.com/SeanTwomey9/PersonalFinanceTool
 #   Relative Location:  PersonalFinanceTool/src/
-#
 ##################################################################################*/
 
 #include "Bill.h"
+
+QString Bill::getName()
+{
+    // Return the name of the bill
+    return m_name;
+}
+
+void Bill::setName(QString p_updatedName)
+{
+    // Update the name of the bill
+    m_name = p_updatedName;
+}
 
 double Bill::getAmountDue()
 {

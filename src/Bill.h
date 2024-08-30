@@ -2,12 +2,9 @@
 #   File name:          Bill.h
 #   Created on:         08/30/2024
 #   Author:             stwomey
-#
 #   Description:        Header file for a Bill
-#
 #   Change History:     See https://github.com/SeanTwomey9/PersonalFinanceTool
 #   Relative Location:  PersonalFinanceTool/src/
-#
 ##################################################################################*/
 
 #ifndef BILL_H
@@ -36,6 +33,12 @@ public:
     ~Bill() {};
 
     /**
+     * @brief Returns the bill's name.
+     * @return m_name - Represents the name of the bill.
+     */
+    QString getName();
+
+    /**
      * @brief Returns the bill's amount due.
      * @return m_amountDueDollars - Represents the amount of money due for the bill.
      */
@@ -56,6 +59,12 @@ public:
 private:
 
     /**
+     * @brief Updates the bill's name.
+     * @param p_updatedName  Updated bill name.
+     */
+    void setName(QString p_updatedName);
+
+    /**
      * @brief Updates the bill's amount due.
      * @param p_updatedAmountDue - Updated amount due.
      */
@@ -73,6 +82,7 @@ private:
      */
     void setPaymentStatus(bool p_updatedPaymentStatus);
 
+    QString m_name = ""; //!< The name of the bill, defaulted to an empty string.
     double m_amountDueDollars = 0.00; //!< The amount of money owed for the bill in dollars and cents, defaulted to zero.
     QDateTime m_dueDate; //!< The date that the bill is due, no default for now.
     bool m_isPaid = false; //!< Whether or not the bill has been paid yet, defaulted to false.
