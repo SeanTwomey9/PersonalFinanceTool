@@ -12,8 +12,56 @@
 
 #include "MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{}
+#include <QFile>
+#include <QMessageBox>
 
-MainWindow::~MainWindow() {}
+MainWindow::MainWindow()
+{
+    if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
+    {
+        // Read config file and create UI
+        this->setWindowTitle(m_APP_NAME);
+    }
+
+    else
+    {
+        // Prompt user for financial information
+        welcomeFirstTimeUser();
+    }
+
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+void MainWindow::welcomeFirstTimeUser()
+{
+    QMessageBox welcomeBox;
+    welcomeBox.setText(m_WELCOME_BOX_PRIMARY_TEXT);
+    welcomeBox.setInformativeText(m_WELCOME_BOX_INFO_TEXT);
+    welcomeBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Close);
+
+    int welcomeBoxSelection = welcomeBox.exec();
+
+    switch(welcomeBoxSelection)
+    {
+        case QMessageBox::Ok:
+        {
+            // Ask for total funds available
+            break;
+        }
+
+        case QMessageBox::Close:
+        {
+            // Close app
+            break;
+        }
+
+        default:
+        {
+            break;
+        }
+    }
+}
