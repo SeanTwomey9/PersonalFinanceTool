@@ -13,7 +13,9 @@
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
-#include <QDateTimeEdit>
+#include <QDateEdit>
+#include <QGridLayout>
+#include <QPushButton>
 
 class BillWidget : public QDialog
 {
@@ -23,15 +25,31 @@ public:
     BillWidget(QObject *parent);
     ~BillWidget();
 
+    void initializeWidget();
+    void createWidgetLayout();
+
 private:
 
     const QString m_WINDOW_TITLE = "Bill Entry";
+
+    // Name input fields
     QLabel *m_nameLabel = nullptr;
     const QString m_NAME_LABEL_TEXT = "Bill Name:";
-    QLineEdit m_NAME_INPUT;
-    QLabel m_DUE_DATE_LABEL;
+    QLineEdit *m_nameInput = nullptr;
+
+    // Due date input fields
+    QLabel *m_dueDateLabel;
     const QString m_DUE_DATE_LABEL_TEXT = "Due Date:";
-    QDateTimeEdit m_DUE_DATE_INPUT;
+    QDateEdit *m_dueDateInput = nullptr;
+
+    QGridLayout *m_gridLayout = nullptr;
+
+    QPushButton *m_closeButton = nullptr;
+    const QString m_CLOSE_BUTTON_TEXT = "Close";
+    QPushButton *m_enterAnotherButton = nullptr;
+    const QString m_ENTER_ANOTHER_BUTTON_TEXT = "Enter another bill";
+    QPushButton *m_doneButton = nullptr;
+    const QString m_DONE_BUTTON_TEXT = "Done";
 };
 
 #endif // BILLWIDGET_H

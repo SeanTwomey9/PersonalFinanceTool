@@ -12,13 +12,12 @@
 BillWidget::BillWidget(QObject *p_parent)
 {
     this->setWindowTitle(m_WINDOW_TITLE);
-    this->setGeometry(50, 50, 200, 200);
-    m_nameLabel = new QLabel(this);
-    m_nameLabel->setText(m_NAME_LABEL_TEXT);
-    m_nameLabel->setGeometry(0, 0, 100, 100);
+
+    // Needed to make the widget appear without clicking the application icon
     this->setWindowModality(Qt::ApplicationModal);
-    this->raise();
-    this->activateWindow();
+
+    initializeWidget();
+    createWidgetLayout();
 }
 
 BillWidget::~BillWidget()
@@ -28,4 +27,39 @@ BillWidget::~BillWidget()
         delete m_nameLabel;
         m_nameLabel = nullptr;
     }
+}
+
+void BillWidget::initializeWidget()
+{
+    m_nameLabel = new QLabel(this);
+    m_nameLabel->setText(m_NAME_LABEL_TEXT);
+    m_nameInput = new QLineEdit(this);
+
+    m_dueDateLabel = new QLabel(this);
+    m_dueDateLabel->setText(m_DUE_DATE_LABEL_TEXT);
+
+    m_dueDateInput = new QDateEdit(this);
+    m_dueDateInput->setCalendarPopup(true);
+    m_dueDateInput->setDate(QDate::currentDate());
+
+    m_closeButton = new QPushButton(this);
+    m_closeButton->setText(m_CLOSE_BUTTON_TEXT);
+
+    m_enterAnotherButton = new QPushButton(this);
+    m_enterAnotherButton->setText(m_ENTER_ANOTHER_BUTTON_TEXT);
+
+    m_doneButton = new QPushButton(this);
+    m_doneButton->setText(m_DONE_BUTTON_TEXT);
+}
+
+void BillWidget::createWidgetLayout()
+{
+    m_gridLayout = new QGridLayout(this);
+    m_gridLayout->addWidget(m_nameLabel, 0, 0, Qt::AlignmentFlag::AlignLeft);
+    m_gridLayout->addWidget(m_nameInput, 0, 1);
+    m_gridLayout->addWidget(m_dueDateLabel, 1, 0);
+    m_gridLayout->addWidget(m_dueDateInput, 1, 1);
+    m_gridLayout->addWidget(m_closeButton, 2, 0);
+    m_gridLayout->addWidget(m_enterAnotherButton, 2, 1);
+    m_gridLayout->addWidget(m_doneButton, 2, 2);
 }

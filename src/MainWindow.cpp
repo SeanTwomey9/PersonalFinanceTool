@@ -103,8 +103,6 @@ void MainWindow::askForTotalAmountAvailable()
         // Display the BillWidget
         BillWidget *billWidget = new BillWidget(this);
         billWidget->show();
-        billWidget->raise();
-        billWidget->activateWindow();
 
     }
 
