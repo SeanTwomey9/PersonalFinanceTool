@@ -10,6 +10,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Bill.h"
+#include "BillWidget.h"
+
 #include <QMainWindow>
 #include <QSettings>
 
@@ -35,7 +38,7 @@ public slots:
      */
     void terminateApplication();
 
-    void saveBillAndDisplayBillWidget();
+    void saveBillAndDisplayBillWidget(Bill *receivedBill);
     void saveBillAndDisplayDashboard();
 
 private:
@@ -57,7 +60,7 @@ private:
 
     void handleBillEntry();
 
-    const QString m_APP_NAME = "Personal Finance Tool"; //!< The name of the application.
+    const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
     const QString m_CONFIG_FILE_DIRECTORY = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
@@ -77,7 +80,13 @@ private:
     double m_amountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
 
     QSettings m_settings;
-    const QString m_FUNDS_INFORMATION_GROUP_LABEL = "Funds Information";
-    const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "Total Funds Available";
+    const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation";
+    const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable";
+    const QString m_BILLS_GROUP_LABEL = "Bills";
+    const QString m_BILL_NAME_KEY = "BillName";
+    const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue";
+    const QString m_BILL_DUE_DATE_KEY = "DueDate";
+
+    BillWidget *m_billWidget;
 };
 #endif // MAINWINDOW_H

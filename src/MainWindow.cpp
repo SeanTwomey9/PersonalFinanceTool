@@ -158,7 +158,7 @@ void MainWindow::createCorruptConfigFileBox()
     }
 }
 
-void MainWindow::saveBillAndDisplayBillWidget()
+void MainWindow::saveBillAndDisplayBillWidget(Bill *receivedBill)
 {
     QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
 
@@ -169,7 +169,10 @@ void MainWindow::saveBillAndDisplayBillWidget()
 
     else
     {
-
+        m_settings.beginGroup(m_BILLS_GROUP_LABEL);
+        m_settings.setValue(m_BILL_NAME_KEY, receivedBill->getName());
+        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, receivedBill->getAmountDue());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, receivedBill->getDueDate());
     }
 }
 
@@ -181,12 +184,11 @@ void MainWindow::saveBillAndDisplayDashboard()
 void MainWindow::handleBillEntry()
 {
     // Display the initial BillWidget
-    BillWidget *billWidget = new BillWidget(this);
-    billWidget->show();
+    m_billWidget = new BillWidget(this);
+    m_billWidget->show();
 
-    connect(billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
-    connect(billWidget->getEnterAnotherButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayBillWidget()), Qt::AutoConnection);
-
+    connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
+    connect(m_billWidget, SIGNAL(sendBill(Bill*)), this, SLOT(saveBillAndDisplayBillWidget(Bill*)), Qt::AutoConnection);
 }
 
 void MainWindow::askForTotalAmountAvailable()

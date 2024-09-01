@@ -56,8 +56,6 @@ public:
      */
     bool getPaymentStatus();
 
-private:
-
     /**
      * @brief Updates the bill's name.
      * @param p_updatedName  Updated bill name.
@@ -76,12 +74,14 @@ private:
      */
     void setDueDate(QDateTime p_updatedDueDate);
 
+
+private:
+
     /**
      * @brief Updates the bill's payment status.
      * @param p_updatedPaymentStatus - Updated payment status.
      */
     void setPaymentStatus(bool p_updatedPaymentStatus);
-
     QString m_name = ""; //!< The name of the bill, defaulted to an empty string.
     double m_amountDueDollars = 0.00; //!< The amount of money owed for the bill in dollars and cents, defaulted to zero.
     QDateTime m_dueDate; //!< The date that the bill is due, no default for now.

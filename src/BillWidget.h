@@ -10,6 +10,8 @@
 #ifndef BILLWIDGET_H
 #define BILLWIDGET_H
 
+#include "Bill.h"
+
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -17,8 +19,9 @@
 #include <QGridLayout>
 #include <QPushButton>
 
-class BillWidget : public QDialog
+class BillWidget : public QWidget
 {
+    Q_OBJECT
 
 public:
 
@@ -31,7 +34,16 @@ public:
     QPushButton* getEnterAnotherButton();
     QPushButton* getDoneButton();
 
+signals:
+
+    void sendBill(Bill *p_sentBill);
+
+public slots:
+
+    void createAndSendBill();
+
 private:
+
 
     const QString m_WINDOW_TITLE = "Bill Entry";
 
@@ -40,9 +52,14 @@ private:
     const QString m_NAME_LABEL_TEXT = "Bill Name:";
     QLineEdit *m_nameInput = nullptr;
 
+    // Amount due input fields
+    QLabel *m_amountDueLabel = nullptr;
+    const QString m_AMOUNT_DUE_LABEL_TEXT = "AmountDue:";
+    QLineEdit *m_amountDueInput = nullptr;
+
     // Due date input fields
     QLabel *m_dueDateLabel;
-    const QString m_DUE_DATE_LABEL_TEXT = "Due Date:";
+    const QString m_DUE_DATE_LABEL_TEXT = "DueDate:";
     QDateEdit *m_dueDateInput = nullptr;
 
     QGridLayout *m_gridLayout = nullptr;
