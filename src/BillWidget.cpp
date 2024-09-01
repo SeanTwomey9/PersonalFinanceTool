@@ -16,6 +16,9 @@ BillWidget::BillWidget(QObject *p_parent)
     m_nameLabel = new QLabel(this);
     m_nameLabel->setText(m_NAME_LABEL_TEXT);
     m_nameLabel->setGeometry(0, 0, 100, 100);
+    this->setWindowModality(Qt::ApplicationModal);
+    this->raise();
+    this->activateWindow();
 }
 
 BillWidget::~BillWidget()

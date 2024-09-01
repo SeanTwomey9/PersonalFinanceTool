@@ -46,6 +46,7 @@ void MainWindow::terminateApplication()
     QCoreApplication::quit();
 }
 
+
 void MainWindow::welcomeFirstTimeUser()
 {
     // Create a welcome message box with appropriate title and title
@@ -98,8 +99,12 @@ void MainWindow::askForTotalAmountAvailable()
     {
         // Store the total amount available entered, if nothing was entered this defaults to $0.00
         m_amountAvailable = amountAvailable;
+
+        // Display the BillWidget
         BillWidget *billWidget = new BillWidget(this);
         billWidget->show();
+        billWidget->raise();
+        billWidget->activateWindow();
 
     }
 

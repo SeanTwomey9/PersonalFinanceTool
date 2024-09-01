@@ -10,12 +10,12 @@
 #ifndef BILLWIDGET_H
 #define BILLWIDGET_H
 
-#include <QWidget>
+#include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QDateTimeEdit>
 
-class BillWidget : public QWidget
+class BillWidget : public QDialog
 {
 
 public:

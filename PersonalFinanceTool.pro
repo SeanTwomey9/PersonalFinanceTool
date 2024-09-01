@@ -27,7 +27,7 @@ TARGET = PersonalFinanceTool
 # The directory where the binary is generated
 DESTDIR = ./bin
 
-OBJECTS_DIR = /obj
+OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
 UI_DIR = ./ui
 
