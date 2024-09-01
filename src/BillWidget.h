@@ -27,6 +27,9 @@ public:
 
     void initializeWidget();
     void createWidgetLayout();
+    QPushButton* getCloseButton();
+    QPushButton* getEnterAnotherButton();
+    QPushButton* getDoneButton();
 
 private:
 

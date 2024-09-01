@@ -11,6 +11,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSettings>
 
 class MainWindow : public QMainWindow
 {
@@ -34,8 +35,14 @@ public slots:
      */
     void terminateApplication();
 
+    void saveBillAndDisplayBillWidget();
+    void saveBillAndDisplayDashboard();
+
 private:
 
+    void createConfigFileGenerateFailureBox();
+    void createCorruptConfigFileBox();
+    void attemptConfigFileGeneration();
     /**
      * @brief Generates a message box to welcome a first time user.
      * Has clickable buttons allowing the user to advance to the total funds available prompt, and to exit the application.
@@ -48,9 +55,16 @@ private:
      */
     void askForTotalAmountAvailable();
 
+    void handleBillEntry();
+
     const QString m_APP_NAME = "Personal Finance Tool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
-    const QString m_CONFIG_FILE_DIRECTORY = "../config/" + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
+    const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
+    const QString m_CONFIG_FILE_DIRECTORY = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
+    const QString m_CONFIG_FILE_GENERATE_FAIL_BOX_TITLE = "Failure To Generate Configuration File"; //!< The title of the config file generation failure message box.
+    const QString m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT = "The configuration file could not be generated in " + m_CONFIG_PARENT_FOLDER; //!< The informative text of the config file generation failure message box.
+    const QString m_CONFIG_CORRUPT_FILE_BOX_TITLE = "Configuration File Is Corrupt"; //!< The title of the config file corrupt message box.
+    const QString m_CONFIG_CORRUPT_FILE_BOX_INFO_TEXT = "The configuration file could not be opened, a new one will be created following the welcoming sequence."; //!< The informative text of the corrupt config file message box.
     const QString m_WELCOME_BOX_PRIMARY_TEXT = "Welcome to the Personal Finance Tool!"; //!< The welcome message box title.
     const QString m_WELCOME_BOX_INFO_TEXT = "On the subsequent screens, you will be asked to provide some financial information."; //!< The welcome message box informative text.
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TITLE = "Total Amount Available"; //!< The total amount available input box title.
@@ -61,5 +75,9 @@ private:
     const int m_NUM_DECIMAL_PLACES = 2; //!< The number of decimal places allowed in the total amount available input box.
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.0; //!< The step size for the up and down arrows in the total amount available input box.
     double m_amountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
+
+    QSettings m_settings;
+    const QString m_FUNDS_INFORMATION_GROUP_LABEL = "Funds Information";
+    const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "Total Funds Available";
 };
 #endif // MAINWINDOW_H

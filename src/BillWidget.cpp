@@ -63,3 +63,18 @@ void BillWidget::createWidgetLayout()
     m_gridLayout->addWidget(m_enterAnotherButton, 2, 1);
     m_gridLayout->addWidget(m_doneButton, 2, 2);
 }
+
+QPushButton* BillWidget::getCloseButton()
+{
+    return m_closeButton;
+}
+
+QPushButton* BillWidget::getEnterAnotherButton()
+{
+    return m_enterAnotherButton;
+}
+
+QPushButton* BillWidget::getDoneButton()
+{
+    return m_doneButton;
+}
