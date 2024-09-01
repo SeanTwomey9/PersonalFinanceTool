@@ -26,6 +26,7 @@ MainWindow::MainWindow()
     m_billWidget = new BillWidget(this);
     connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
     connect(m_billWidget, SIGNAL(sendBill(Bill*)), this, SLOT(saveBillAndDisplayBillWidget(Bill*)), Qt::AutoConnection);
+    connect(m_billWidget->getDoneButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayDashboard()), Qt::AutoConnection);
 
     attemptConfigFileGeneration();
 
@@ -188,6 +189,24 @@ void MainWindow::saveBillAndDisplayBillWidget(Bill *receivedBill)
 
 void MainWindow::saveBillAndDisplayDashboard()
 {
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+
+    if(m_settings.status() != QSettings::NoError)
+    {
+        createCorruptConfigFileBox();
+    }
+
+    else
+    {
+        m_settings.beginGroup(m_billWidget->getNameInput()->text());
+        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
+        m_settings.endGroup();
+        m_settings.sync();
+
+        m_billWidget->hide();
+        this->show();
+    }
 
 }
 
