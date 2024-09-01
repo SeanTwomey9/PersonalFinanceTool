@@ -22,6 +22,11 @@ MainWindow::MainWindow()
     connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
     this->setWindowTitle(m_APP_NAME);
 
+    // Create the BillWidget
+    m_billWidget = new BillWidget(this);
+    connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
+    connect(m_billWidget, SIGNAL(sendBill(Bill*)), this, SLOT(saveBillAndDisplayBillWidget(Bill*)), Qt::AutoConnection);
+
     attemptConfigFileGeneration();
 
 
@@ -169,26 +174,21 @@ void MainWindow::saveBillAndDisplayBillWidget(Bill *receivedBill)
 
     else
     {
-        m_settings.beginGroup(m_BILLS_GROUP_LABEL);
-        m_settings.setValue(m_BILL_NAME_KEY, receivedBill->getName());
+        m_settings.beginGroup(receivedBill->getName());
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, receivedBill->getAmountDue());
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, receivedBill->getDueDate());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, receivedBill->getDueDate().date().toString());
+        m_settings.endGroup();
+        m_settings.sync();
+
+        m_billWidget->getNameInput()->clear();
+        m_billWidget->getAmountDueInput()->clear();
+        m_billWidget->getDueDateInput()->setDate(QDate::currentDate());
     }
 }
 
 void MainWindow::saveBillAndDisplayDashboard()
 {
 
-}
-
-void MainWindow::handleBillEntry()
-{
-    // Display the initial BillWidget
-    m_billWidget = new BillWidget(this);
-    m_billWidget->show();
-
-    connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
-    connect(m_billWidget, SIGNAL(sendBill(Bill*)), this, SLOT(saveBillAndDisplayBillWidget(Bill*)), Qt::AutoConnection);
 }
 
 void MainWindow::askForTotalAmountAvailable()
@@ -219,7 +219,7 @@ void MainWindow::askForTotalAmountAvailable()
             m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_amountAvailable);
             m_settings.endGroup();
             m_settings.sync();
-            handleBillEntry();
+            m_billWidget->show();
         }
 
     }

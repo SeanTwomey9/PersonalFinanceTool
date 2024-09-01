@@ -33,6 +33,9 @@ public:
     QPushButton* getCloseButton();
     QPushButton* getEnterAnotherButton();
     QPushButton* getDoneButton();
+    QLineEdit* getNameInput();
+    QLineEdit* getAmountDueInput();
+    QDateEdit* getDueDateInput();
 
 signals:
 
@@ -54,12 +57,12 @@ private:
 
     // Amount due input fields
     QLabel *m_amountDueLabel = nullptr;
-    const QString m_AMOUNT_DUE_LABEL_TEXT = "AmountDue:";
+    const QString m_AMOUNT_DUE_LABEL_TEXT = "Amount Due:";
     QLineEdit *m_amountDueInput = nullptr;
 
     // Due date input fields
     QLabel *m_dueDateLabel;
-    const QString m_DUE_DATE_LABEL_TEXT = "DueDate:";
+    const QString m_DUE_DATE_LABEL_TEXT = "Due Date:";
     QDateEdit *m_dueDateInput = nullptr;
 
     QGridLayout *m_gridLayout = nullptr;

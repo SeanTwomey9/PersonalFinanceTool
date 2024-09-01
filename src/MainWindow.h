@@ -58,8 +58,6 @@ private:
      */
     void askForTotalAmountAvailable();
 
-    void handleBillEntry();
-
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
@@ -82,8 +80,6 @@ private:
     QSettings m_settings;
     const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation";
     const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable";
-    const QString m_BILLS_GROUP_LABEL = "Bills";
-    const QString m_BILL_NAME_KEY = "BillName";
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue";
     const QString m_BILL_DUE_DATE_KEY = "DueDate";
 

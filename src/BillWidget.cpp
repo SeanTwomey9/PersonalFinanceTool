@@ -94,3 +94,18 @@ void BillWidget::createAndSendBill()
 
     emit sendBill(enteredBill);
 }
+
+QLineEdit* BillWidget::getNameInput()
+{
+    return m_nameInput;
+}
+
+QLineEdit* BillWidget::getAmountDueInput()
+{
+    return m_amountDueInput;
+}
+
+QDateEdit* BillWidget::getDueDateInput()
+{
+    return m_dueDateInput;
+}
