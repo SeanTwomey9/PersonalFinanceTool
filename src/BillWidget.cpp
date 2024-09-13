@@ -18,7 +18,6 @@ BillWidget::BillWidget(QObject *p_parent)
 
     initializeWidget();
     createWidgetLayout();
-    connect(m_enterAnotherButton, SIGNAL(clicked()), this, SLOT(createAndSendBill()), Qt::AutoConnection);
 }
 
 BillWidget::~BillWidget()
@@ -83,16 +82,6 @@ QPushButton* BillWidget::getEnterAnotherButton()
 QPushButton* BillWidget::getDoneButton()
 {
     return m_doneButton;
-}
-
-void BillWidget::createAndSendBill()
-{
-    Bill *enteredBill = new Bill();
-    enteredBill->setName(m_nameInput->text());
-    enteredBill->setAmountDue(m_amountDueInput->text().toDouble());
-    enteredBill->setDueDate(m_dueDateInput->dateTime());
-
-    emit sendBill(enteredBill);
 }
 
 QLineEdit* BillWidget::getNameInput()

@@ -38,7 +38,7 @@ public slots:
      */
     void terminateApplication();
 
-    void saveBillAndDisplayBillWidget(Bill *receivedBill);
+    void saveBillAndDisplayBillWidget();
     void saveBillAndDisplayDashboard();
 
 private:
@@ -77,11 +77,11 @@ private:
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.0; //!< The step size for the up and down arrows in the total amount available input box.
     double m_amountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
 
-    QSettings m_settings;
-    const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation";
-    const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable";
-    const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue";
-    const QString m_BILL_DUE_DATE_KEY = "DueDate";
+    QSettings m_settings; //!< The QSettings object which reads and writes to the configuration file.
+    const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation"; //!< The group label for the funds information section of the configuration file.
+    const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable"; //!< The total funds available key which maps to the total funds available value.
+    const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
+    const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
 
     BillWidget *m_billWidget;
 };

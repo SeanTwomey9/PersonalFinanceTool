@@ -41,10 +41,6 @@ signals:
 
     void sendBill(Bill *p_sentBill);
 
-public slots:
-
-    void createAndSendBill();
-
 private:
 
 
