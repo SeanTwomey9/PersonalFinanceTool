@@ -21,6 +21,7 @@ MainWindow::MainWindow()
     // Connection to terminate application when certain conditions are met
     connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
     this->setWindowTitle(m_APP_NAME);
+    this->setGeometry(0, 0, 300, 200);
 
     // Create the BillWidget
     m_billWidget = new BillWidget(this);
@@ -28,6 +29,8 @@ MainWindow::MainWindow()
     connect(m_billWidget->getEnterAnotherButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayBillWidget()), Qt::AutoConnection);
     connect(m_billWidget->getDoneButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayDashboard()), Qt::AutoConnection);
 
+    m_billTableWidget = new QTableWidget(this);
+    m_billTableWidget->setGeometry(0, 0, 300, 200);
     attemptConfigFileGeneration();
 
 
@@ -69,6 +72,103 @@ void MainWindow::createConfigFileGenerateFailureBox()
     }
 }
 
+void MainWindow::createInvalidKeyBox()
+{
+    QMessageBox invalidKeyBox;
+    invalidKeyBox.setText(m_INVALID_KEY_BOX_TEXT);
+    invalidKeyBox.setInformativeText(m_INVALID_KEY_BOX_INFO_TEXT);
+    invalidKeyBox.setStandardButtons(QMessageBox::Ok);
+
+    int invalidKeyBoxSelection = invalidKeyBox.exec();
+
+    switch(invalidKeyBoxSelection)
+    {
+    case QMessageBox::Button::Ok :
+    {
+        emit conditionToTerminateMet();
+        break;
+    }
+
+    default :
+    {
+        emit conditionToTerminateMet();
+        break;
+    }
+    }
+}
+
+
+void MainWindow::readConfigAndCreateUI()
+{
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+
+    if(m_settings.status() != QSettings::NoError)
+    {
+        createCorruptConfigFileBox();
+    }
+
+    else
+    {
+        QStringList configFileKeys = m_settings.allKeys();
+
+        foreach(QString key, configFileKeys)
+        {
+            qDebug() << "KEY: " << key;
+            QStringList keyValues = m_settings.value(key).toStringList();
+            qDebug() << "VALUES: " << keyValues;
+            QStringList splitKeys = key.split(QLatin1Char('/'));
+
+            if(splitKeys.size() < 2)
+            {
+                createInvalidKeyBox();
+            }
+
+            else
+            {
+                QString groupLabel = splitKeys.at(0);
+                QString valueLabel = splitKeys.at(1);
+
+                if(groupLabel == m_FUNDS_INFORMATION_GROUP_LABEL)
+                {
+                    if(keyValues.at(0).isEmpty())
+                    {
+                        m_amountAvailable = 0.00;
+                    }
+
+                    else
+                    {
+                        m_amountAvailable = keyValues.at(0).toDouble();
+                    }
+                }
+
+                else
+                {
+
+                }
+            }
+            /*m_billTableWidget->setRowCount(m_billList.size());
+        m_billTableWidget->setColumnCount(3);
+        m_billTableWidget->setHorizontalHeaderLabels(QString("Bill Name;Amount Due;Due Date").split(";"));
+
+        QList<Bill>::iterator billListIterator;
+
+        int row = 0;
+        for(billListIterator = m_billList.begin(); billListIterator != m_billList.end(); ++billListIterator)
+        {
+            Bill currentBill = *billListIterator;
+            m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
+            m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
+            m_billTableWidget->setItem(row, 2, new QTableWidgetItem(currentBill.getDueDate().toString()));
+            row++;
+        }
+
+        m_billTableWidget->resizeColumnsToContents();
+        this->show();*/
+            this->show();
+        }
+    }
+}
+
 void MainWindow::attemptConfigFileGeneration()
 {
     QDir configParentFolder;
@@ -84,6 +184,8 @@ void MainWindow::attemptConfigFileGeneration()
     else if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
     {
         // Read config file and create UI
+        readConfigAndCreateUI();
+
     }
 
     // The config file path exists but the file is not in it
@@ -110,26 +212,26 @@ void MainWindow::welcomeFirstTimeUser()
 
     switch(welcomeBoxSelection)
     {
-        // If the user selects "Ok"
-        case QMessageBox::Ok :
-        {
-            // Ask for total funds available
-            askForTotalAmountAvailable();
-            break;
-        }
+    // If the user selects "Ok"
+    case QMessageBox::Ok :
+    {
+        // Ask for total funds available
+        askForTotalAmountAvailable();
+        break;
+    }
 
         // If the user selects "Close"
-        case QMessageBox::Close :
-        {
-            // Exit application
-            emit conditionToTerminateMet();
-            break;
-        }
+    case QMessageBox::Close :
+    {
+        // Exit application
+        emit conditionToTerminateMet();
+        break;
+    }
 
-        default:
-        {
-            break;
-        }
+    default:
+    {
+        break;
+    }
     }
 }
 
@@ -145,27 +247,28 @@ void MainWindow::createCorruptConfigFileBox()
 
     switch(corruptBoxSelection)
     {
-        case QMessageBox::Ok :
-        {
-            welcomeFirstTimeUser();
-            break;
-        }
+    case QMessageBox::Ok :
+    {
+        welcomeFirstTimeUser();
+        break;
+    }
 
-        case QMessageBox::Close :
-        {
-            emit conditionToTerminateMet();
-            break;
-        }
+    case QMessageBox::Close :
+    {
+        emit conditionToTerminateMet();
+        break;
+    }
 
-        default:
-        {
-            break;
-        }
+    default:
+    {
+        break;
+    }
     }
 }
 
 void MainWindow::saveBillAndDisplayBillWidget()
 {
+    // Attempt to access the config file
     QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
 
     if(m_settings.status() != QSettings::NoError)
@@ -175,14 +278,15 @@ void MainWindow::saveBillAndDisplayBillWidget()
 
     else
     {
-        Bill *enteredBill = new Bill();
-        enteredBill->setName(m_billWidget->getNameInput()->text());
-        enteredBill->setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
-        enteredBill->setDueDate(m_billWidget->getDueDateInput()->dateTime());
+        Bill enteredBill;
+        enteredBill.setName(m_billWidget->getNameInput()->text());
+        enteredBill.setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
+        enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
+        m_billMap.insert(m_billWidget->getNameInput()->text(), enteredBill);
 
         m_settings.beginGroup(m_billWidget->getNameInput()->text());
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->dateTime().toString());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
         m_settings.endGroup();
         m_settings.sync();
 
@@ -203,6 +307,12 @@ void MainWindow::saveBillAndDisplayDashboard()
 
     else
     {
+        Bill enteredBill;
+        enteredBill.setName(m_billWidget->getNameInput()->text());
+        enteredBill.setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
+        enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
+        m_billMap.insert(m_billWidget->getNameInput()->text(), enteredBill);
+
         m_settings.beginGroup(m_billWidget->getNameInput()->text());
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
@@ -210,6 +320,24 @@ void MainWindow::saveBillAndDisplayDashboard()
         m_settings.sync();
 
         m_billWidget->hide();
+
+        m_billTableWidget->setRowCount(m_billMap.size());
+        m_billTableWidget->setColumnCount(3);
+        m_billTableWidget->setHorizontalHeaderLabels(QString("Bill Name;Amount Due;Due Date").split(";"));
+
+        QMap<QString, Bill>::iterator billMapIterator;
+
+        int row = 0;
+        for(billMapIterator = m_billMap.begin(); billMapIterator != m_billMap.end(); ++billMapIterator)
+        {
+            Bill currentBill = *billMapIterator;
+            m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
+            m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
+            m_billTableWidget->setItem(row, 2, new QTableWidgetItem(currentBill.getDueDate().toString()));
+            row++;
+        }
+
+        m_billTableWidget->resizeColumnsToContents();
         this->show();
     }
 
@@ -222,7 +350,7 @@ void MainWindow::askForTotalAmountAvailable()
 
     // Set up the input dialog box with appropriate text and input restrictions and store the result
     double amountAvailable = QInputDialog::getDouble(this, m_ASK_FOR_AMOUNT_AVAILABLE_TITLE, m_ASK_FOR_AMOUNT_AVAILABLE_TEXT, m_DEFAULT_AMOUNT_AVAILABLE, m_MIN_AMOUNT_AVAILABLE, m_MAX_AMOUNT_AVAILABLE, m_NUM_DECIMAL_PLACES,
-                                                                  &isTotalAmountAvailableRecorded, Qt::WindowFlags(), m_AMOUNT_AVAILABLE_STEP_SIZE);
+                                                     &isTotalAmountAvailableRecorded, Qt::WindowFlags(), m_AMOUNT_AVAILABLE_STEP_SIZE);
 
     // If the user pressed ok
     if(isTotalAmountAvailableRecorded)

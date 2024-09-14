@@ -15,6 +15,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include <QTableWidget>
 
 class MainWindow : public QMainWindow
 {
@@ -58,6 +59,9 @@ private:
      */
     void askForTotalAmountAvailable();
 
+    void readConfigAndCreateUI();
+    void createInvalidKeyBox();
+
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
@@ -70,6 +74,8 @@ private:
     const QString m_WELCOME_BOX_INFO_TEXT = "On the subsequent screens, you will be asked to provide some financial information."; //!< The welcome message box informative text.
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TITLE = "Total Amount Available"; //!< The total amount available input box title.
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TEXT = "Please enter the total amount of money available in USD."; //!< The total amount available informative text.
+    const QString m_INVALID_KEY_BOX_TEXT = "Invalid Configuration File Key/Value Pair";
+    const QString m_INVALID_KEY_BOX_INFO_TEXT = "A key/value pair from " + m_CONFIG_FILE_NAME + " is invalid. Please correct the file to have a single value per key and relaunch the application.";
     const double m_DEFAULT_AMOUNT_AVAILABLE = 0.0; //!< The default amount of money available assigned if the user does not provide the actual amount.
     const double m_MIN_AMOUNT_AVAILABLE = 0.0; //!< The minimum amount the user can specify for the total amount of money they have available.
     const double m_MAX_AMOUNT_AVAILABLE = static_cast<double>(INT64_MAX); //!< The maximum amount the user can specify for the total amount of money they have available.
@@ -83,6 +89,8 @@ private:
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
 
-    BillWidget *m_billWidget;
+    BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
+    QMap<QString, Bill> m_billMap;
+    QTableWidget *m_billTableWidget;
 };
 #endif // MAINWINDOW_H

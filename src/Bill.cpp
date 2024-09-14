@@ -33,13 +33,13 @@ void Bill::setAmountDue(double p_updatedAmountDue)
     m_amountDueDollars = p_updatedAmountDue;
 }
 
-QDateTime Bill::getDueDate()
+QDate Bill::getDueDate()
 {
     // Return the due date
     return m_dueDate;
 }
 
-void Bill::setDueDate(QDateTime p_updatedDueDate)
+void Bill::setDueDate(QDate p_updatedDueDate)
 {
     // Update the due date
     m_dueDate = p_updatedDueDate;

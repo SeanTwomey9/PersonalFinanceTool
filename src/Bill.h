@@ -10,15 +10,13 @@
 #ifndef BILL_H
 #define BILL_H
 
-#include <QObject>
-#include <QDateTime>
+#include <QDate>
 
 /**
  * @brief The Bill class represents a bill which a user needs to pay.
  */
-class Bill : public QObject
+class Bill
 {
-    Q_OBJECT
 
 public:
 
@@ -48,7 +46,7 @@ public:
      * @brief Returns the bill's due date.
      * @return m_dueData - Represents the due date of the bill.
      */
-    QDateTime getDueDate();
+    QDate getDueDate();
 
     /**
      * @brief Returns the payment status of the bill.
@@ -72,7 +70,7 @@ public:
      * @brief Updates the bill's due date.
      * @param p_updatedDueDate - Updated due date.
      */
-    void setDueDate(QDateTime p_updatedDueDate);
+    void setDueDate(QDate p_updatedDueDate);
 
 
 private:
@@ -84,7 +82,7 @@ private:
     void setPaymentStatus(bool p_updatedPaymentStatus);
     QString m_name = ""; //!< The name of the bill, defaulted to an empty string.
     double m_amountDueDollars = 0.00; //!< The amount of money owed for the bill in dollars and cents, defaulted to zero.
-    QDateTime m_dueDate; //!< The date that the bill is due, no default for now.
+    QDate m_dueDate; //!< The date that the bill is due, no default for now.
     bool m_isPaid = false; //!< Whether or not the bill has been paid yet, defaulted to false.
 
 signals:
