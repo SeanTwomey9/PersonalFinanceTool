@@ -113,9 +113,7 @@ void MainWindow::readConfigAndCreateUI()
 
         foreach(QString key, configFileKeys)
         {
-            qDebug() << "KEY: " << key;
             QStringList keyValues = m_settings.value(key).toStringList();
-            qDebug() << "VALUES: " << keyValues;
             QStringList splitKeys = key.split(QLatin1Char('/'));
 
             if(splitKeys.size() < 2)
@@ -143,19 +141,43 @@ void MainWindow::readConfigAndCreateUI()
 
                 else
                 {
+                    if(!m_billMap.contains(groupLabel))
+                    {
+                        Bill readBill;
+                        readBill.setName(groupLabel);
+                        readBill.setAmountDue(keyValues.at(0).toDouble());
+                        m_billMap.insert(groupLabel, readBill);
+                    }
 
+                    else
+                    {
+                        if(valueLabel == m_BILL_AMOUNT_DUE_KEY)
+                        {
+                            m_billMap[groupLabel].setAmountDue(keyValues.at(0).toDouble());
+                        }
+
+                        else
+                        {
+                            QString dateNoSpaces = keyValues.at(0).simplified();
+                            dateNoSpaces.replace(" ", "");
+                            QDate readDate = QDate::fromString(dateNoSpaces,"dddMMMddyyyy");
+                            m_billMap[groupLabel].setDueDate(readDate);
+                        }
+                    }
                 }
             }
-            /*m_billTableWidget->setRowCount(m_billList.size());
+        }
+
+        m_billTableWidget->setRowCount(m_billMap.size());
         m_billTableWidget->setColumnCount(3);
         m_billTableWidget->setHorizontalHeaderLabels(QString("Bill Name;Amount Due;Due Date").split(";"));
 
-        QList<Bill>::iterator billListIterator;
+        QMap<QString, Bill>::iterator billMapIterator;
 
         int row = 0;
-        for(billListIterator = m_billList.begin(); billListIterator != m_billList.end(); ++billListIterator)
+        for(billMapIterator = m_billMap.begin(); billMapIterator != m_billMap.end(); ++billMapIterator)
         {
-            Bill currentBill = *billListIterator;
+            Bill currentBill = *billMapIterator;
             m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
             m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
             m_billTableWidget->setItem(row, 2, new QTableWidgetItem(currentBill.getDueDate().toString()));
@@ -163,9 +185,7 @@ void MainWindow::readConfigAndCreateUI()
         }
 
         m_billTableWidget->resizeColumnsToContents();
-        this->show();*/
-            this->show();
-        }
+        this->show();
     }
 }
 
