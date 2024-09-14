@@ -30,6 +30,8 @@ public:
      */
     ~Bill() {};
 
+    friend bool operator == (const Bill &p_firstBill, const Bill &p_secondBill);
+
     /**
      * @brief Returns the bill's name.
      * @return m_name - Represents the name of the bill.

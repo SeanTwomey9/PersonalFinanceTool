@@ -21,7 +21,7 @@ MainWindow::MainWindow()
     // Connection to terminate application when certain conditions are met
     connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
     this->setWindowTitle(m_APP_NAME);
-    this->setGeometry(0, 0, 500, 200);
+    this->setGeometry(0, 0, 500, 520);
 
     // Create the BillWidget
     m_billWidget = new BillWidget(this);
@@ -38,11 +38,11 @@ MainWindow::MainWindow()
 
     // Create the amount available line edit and set its location
     m_amountAvailableEdit = new QLineEdit(this);
-    m_amountAvailableEdit->setGeometry(150, 0, 50, 20);
+    m_amountAvailableEdit->setGeometry(150, 0, 75, 20);
 
     // Create the bill table widget and set its location
     m_billTableWidget = new QTableWidget(this);
-    m_billTableWidget->setGeometry(0, 20, 500, 200);
+    m_billTableWidget->setGeometry(0, 20, 500, 500);
 
     m_saveButton = new QPushButton(this);
     m_saveButton->setText(m_SAVE_STRING);
@@ -161,14 +161,8 @@ void MainWindow::createTableWidgetUsingMap()
 
 QDate MainWindow::convertDateStringToDate(QString p_dateString)
 {
-    // Adjust the due date string to only have single spaces within it
-    QString dateNoSpaces = p_dateString.simplified();
-
-    // Remove spaces from due date string, this results in the due date string being in the form "M/dd/yyyy" or "9/14/2024" for example
-    dateNoSpaces.replace(" ", "");
-
     // Convert the due date string into a date object and return it
-    return QDate::fromString(dateNoSpaces,"M/d/yyyy");
+    return QDate::fromString(removeSpaces(p_dateString),"M/d/yyyy");
 }
 
 void MainWindow::readConfigAndCreateUI()
@@ -397,6 +391,12 @@ bool MainWindow::paymentStatusStringToBoolean(QString p_paymentStatus)
     return p_paymentStatus == m_PAID_STRING ? true : false;
 }
 
+QString MainWindow::removeSpaces(QString p_stringWithSpaces)
+{
+    QString noSpaces = p_stringWithSpaces.simplified();
+    return noSpaces.replace(" ", "");
+}
+
 void MainWindow::openConfigForBillCreation()
 {
     // Attempt to access the config file
@@ -413,7 +413,7 @@ void MainWindow::openConfigForBillCreation()
     else
     {
         // Write the Bill information out to the config file
-        m_settings.beginGroup(m_billWidget->getNameInput()->text());
+        m_settings.beginGroup(removeSpaces(m_billWidget->getNameInput()->text()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(false));
@@ -430,7 +430,7 @@ void MainWindow::openConfigForBillCreation()
         enteredBill.setPaymentStatus(false);
 
         // Insert the Bill object into the map with a key of the name of the bill
-        m_billMap.insert(m_billWidget->getNameInput()->text(), enteredBill);
+        m_billMap[removeSpaces(m_billWidget->getNameInput()->text())] = enteredBill;
     }
 }
 
@@ -533,6 +533,8 @@ void MainWindow::updateConfigFromUI()
         for(int row = 0; row < m_billTableWidget->rowCount(); row++)
         {
             QString billName = m_billTableWidget->item(row, 0)->text();
+            QString billNameNoSpaces = removeSpaces(billName);
+            Bill savedBill;
 
             for(int col = 0; col < m_billTableWidget->columnCount(); col++)
             {
@@ -540,30 +542,30 @@ void MainWindow::updateConfigFromUI()
 
                 if(columnHeader == m_BILL_NAME_COLUMN_HEADER_STRING)
                 {
-                    Bill savedBill;
                     savedBill.setName(billName);
-                    m_billMap[billName] = savedBill;
+                    m_billMap[billNameNoSpaces] = savedBill;
                 }
 
                 else if(columnHeader == m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING)
                 {
-                    m_billMap[billName].setAmountDue(m_billTableWidget->item(row, col)->text().toDouble());
+                    m_billMap[billNameNoSpaces].setAmountDue(m_billTableWidget->item(row, col)->text().toDouble());
                 }
 
                 else if(columnHeader == m_BILL_DUE_DATE_COLUMN_HEADER_STRING)
                 {
                     QDateEdit *savedDate;
                     savedDate = (QDateEdit*)m_billTableWidget->cellWidget(row, col);
-                    m_billMap[billName].setDueDate(savedDate->date());
+                    m_billMap[billNameNoSpaces].setDueDate(savedDate->date());
                 }
 
                 else
                 {
-                    m_billMap[billName].setPaymentStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
+                    m_billMap[billNameNoSpaces].setPaymentStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
 
-                    if(m_billMap[billName].getPaymentStatus() == true)
+                    if(m_billMap[billNameNoSpaces].getPaymentStatus() == true && !m_paidBillsList.contains(savedBill))
                     {
-                        m_totalAmountAvailable -= m_billMap[billName].getAmountDue();
+                        m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
+                        m_paidBillsList.append(savedBill);
                     }
                 }
             }
@@ -588,7 +590,7 @@ void MainWindow::updateConfigFromUI()
     for(billMapIterator = m_billMap.begin(); billMapIterator != m_billMap.end(); ++billMapIterator)
     {
         Bill currentBill = *billMapIterator;
-        m_settings.beginGroup(currentBill.getName());
+        m_settings.beginGroup(removeSpaces(currentBill.getName()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.getPaymentStatus()));

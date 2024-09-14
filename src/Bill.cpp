@@ -56,3 +56,10 @@ void Bill::setPaymentStatus(bool p_updatedPaymentStatus)
     // Update the payment status
     m_isPaid = p_updatedPaymentStatus;
 }
+
+
+bool operator == (const Bill &p_firstBill, const Bill &p_secondBill)
+{
+    return (p_firstBill.m_name == p_secondBill.m_name && p_firstBill.m_amountDueDollars == p_secondBill.m_amountDueDollars
+            && p_firstBill.m_dueDate == p_secondBill.m_dueDate && p_firstBill.m_isPaid == p_secondBill.m_isPaid);
+}

@@ -119,6 +119,8 @@ private:
 
     QDate convertDateStringToDate(QString p_dateString);
 
+    QString removeSpaces(QString p_stringWithSpaces);
+
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
@@ -139,6 +141,7 @@ private:
     const int m_NUM_DECIMAL_PLACES = 2; //!< The number of decimal places allowed in the total amount available input box.
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.0; //!< The step size for the up and down arrows in the total amount available input box.
     double m_totalAmountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
+    double m_totalSpentOnBills = 0.0;
 
     QSettings m_settings; //!< The QSettings object which reads and writes to the configuration file.
     const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation"; //!< The group label for the funds information section of the configuration file.
@@ -163,5 +166,7 @@ private:
     QLineEdit *m_amountAvailableEdit; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
 
     QPushButton *m_saveButton;
+
+    QList<Bill> m_paidBillsList;
 };
 #endif // MAINWINDOW_H
