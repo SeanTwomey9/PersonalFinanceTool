@@ -101,6 +101,9 @@ private:
      */
     void readConfigAndCreateUI();
 
+    QString paymentStatusBooleanToString(bool p_isBillPaid);
+    bool paymentStatusStringToBoolean(QString p_paymentStatus);
+
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
@@ -111,7 +114,7 @@ private:
     const QString m_CONFIG_CORRUPT_FILE_BOX_INFO_TEXT = "The configuration file could not be opened, a new one will be created following the welcoming sequence."; //!< The informative text of the corrupt config file message box.
     const QString m_WELCOME_BOX_PRIMARY_TEXT = "Welcome to the Personal Finance Tool!"; //!< The welcome message box title.
     const QString m_WELCOME_BOX_INFO_TEXT = "On the subsequent screens, you will be asked to provide some financial information."; //!< The welcome message box informative text.
-    const QString m_ASK_FOR_AMOUNT_AVAILABLE_TITLE = "Total Amount Available"; //!< The total amount available input box title.
+    const QString m_TOTAL_AMOUNT_AVAILABLE = "Total Amount Available"; //!< The total amount available represented as a string.
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TEXT = "Please enter the total amount of money available in USD."; //!< The total amount available informative text.
     const QString m_INVALID_KEY_BOX_TEXT = "Invalid Configuration File Key/Value Pair";
     const QString m_INVALID_KEY_BOX_INFO_TEXT = "A key/value pair from " + m_CONFIG_FILE_NAME + " is invalid. Please correct the file to have a single value per key and relaunch the application.";
@@ -127,9 +130,15 @@ private:
     const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable"; //!< The total funds available key which maps to the total funds available value.
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
+    const QString m_BILL_PAYMENT_STATUS_KEY = "PaymentStatus";
+    const QString m_PAID_STRING = "Paid";
+    const QString m_NOT_PAID_STRING = "Not Paid";
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
     QTableWidget *m_billTableWidget; //!< Table widget displaying inputted bill information.
+
+    QLabel *m_amountAvailableLabel; //!< The label for the total amount available.
+    QLineEdit *m_amountAvailableEdit; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
 };
 #endif // MAINWINDOW_H

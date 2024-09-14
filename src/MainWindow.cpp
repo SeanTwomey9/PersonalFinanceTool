@@ -21,19 +21,29 @@ MainWindow::MainWindow()
     // Connection to terminate application when certain conditions are met
     connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
     this->setWindowTitle(m_APP_NAME);
-    this->setGeometry(0, 0, 300, 200);
+    this->setGeometry(0, 0, 500, 200);
 
     // Create the BillWidget
     m_billWidget = new BillWidget(this);
+
+    // Connect its various buttons to appropriate slots
     connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
     connect(m_billWidget->getEnterAnotherButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayBillWidget()), Qt::AutoConnection);
     connect(m_billWidget->getDoneButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayDashboard()), Qt::AutoConnection);
 
+    // Create the amount available label and set its location and text
+    m_amountAvailableLabel = new QLabel(this);
+    m_amountAvailableLabel->setGeometry(0, 0, 150, 20);
+    m_amountAvailableLabel->setText(m_TOTAL_AMOUNT_AVAILABLE + ":");
+
+    // Create the amount available line edit and set its location
+    m_amountAvailableEdit = new QLineEdit(this);
+    m_amountAvailableEdit->setGeometry(150, 0, 50, 20);
+
+    // Create the bill table widget and set its location
     m_billTableWidget = new QTableWidget(this);
-    m_billTableWidget->setGeometry(0, 0, 300, 200);
+    m_billTableWidget->setGeometry(0, 20, 500, 200);
     attemptConfigFileGeneration();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -110,10 +120,10 @@ void MainWindow::createTableWidgetUsingMap()
     m_billTableWidget->setRowCount(m_billMap.size());
 
     // Set the number of columns to the number of fields which each Bill displays
-    m_billTableWidget->setColumnCount(3);
+    m_billTableWidget->setColumnCount(4);
 
     // Set the table widget headers to the appropriate fields each Bill displays
-    m_billTableWidget->setHorizontalHeaderLabels(QString("Bill Name;Amount Due;Due Date").split(";"));
+    m_billTableWidget->setHorizontalHeaderLabels(QString("Bill Name;Amount Due;Due Date;Payment Status").split(";"));
 
     // Initialize the row we're setting to zero
     int row = 0;
@@ -130,6 +140,8 @@ void MainWindow::createTableWidgetUsingMap()
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
         m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
         m_billTableWidget->setItem(row, 2, new QTableWidgetItem(currentBill.getDueDate().toString()));
+        qDebug() << "BILL PAYMENT STATUS: " << currentBill.getPaymentStatus();
+        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(paymentStatusBooleanToString(currentBill.getPaymentStatus())));
 
         // Increment the row for the next Bill
         row++;
@@ -220,21 +232,31 @@ void MainWindow::readConfigAndCreateUI()
                     // If the bill being checked already exists in the bill map, then we're checking its due date
                     else
                     {
-                        // Adjust the due date string to only have single spaces within it
-                        QString dateNoSpaces = keyValues.at(0).simplified();
+                        if(valueLabel == m_BILL_DUE_DATE_KEY)
+                        {
+                            // Adjust the due date string to only have single spaces within it
+                            QString dateNoSpaces = keyValues.at(0).simplified();
 
-                        // Remove spaces from due date string, this results in the due date string being in the form "dddMMMddyyyy" or "SatSep142024" for example
-                        dateNoSpaces.replace(" ", "");
+                            // Remove spaces from due date string, this results in the due date string being in the form "dddMMMddyyyy" or "SatSep142024" for example
+                            dateNoSpaces.replace(" ", "");
 
-                        // Convert the due date string into a date object
-                        QDate readDate = QDate::fromString(dateNoSpaces,"dddMMMddyyyy");
+                            // Convert the due date string into a date object
+                            QDate readDate = QDate::fromString(dateNoSpaces,"dddMMMddyyyy");
 
-                        // Set the appropriate Bill's due date from the bill map
-                        m_billMap[groupLabel].setDueDate(readDate);
+                            // Set the appropriate Bill's due date from the bill map
+                            m_billMap[groupLabel].setDueDate(readDate);
+                        }
+
+                        else
+                        {
+                            m_billMap[groupLabel].setPaymentStatus(paymentStatusStringToBoolean(keyValues.at(0)));
+                        }
                     }
                 }
             }
         }
+
+        m_amountAvailableEdit->setText(QString::number(m_amountAvailable));
 
         // Create the table widget using the bill map's contents
         createTableWidgetUsingMap();
@@ -349,6 +371,17 @@ void MainWindow::createCorruptConfigFileBox()
     }
 }
 
+QString MainWindow::paymentStatusBooleanToString(bool p_isBillPaid)
+{
+    // If the bill has been paid, return the paid string, otherwise return the not paid string
+    return p_isBillPaid ? m_PAID_STRING : m_NOT_PAID_STRING;
+}
+
+bool MainWindow::paymentStatusStringToBoolean(QString p_paymentStatus)
+{
+    return p_paymentStatus == m_PAID_STRING ? true : false;
+}
+
 void MainWindow::openConfigForBillCreation()
 {
     // Attempt to access the config file
@@ -364,21 +397,25 @@ void MainWindow::openConfigForBillCreation()
     // Otherwise if the config file was opened successfully
     else
     {
+        // Write the Bill information out to the config file
+        m_settings.beginGroup(m_billWidget->getNameInput()->text());
+        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
+        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(false));
+        m_settings.endGroup();
+        m_settings.sync();
+
         // Create a new Bill object for the bill information inputted into the BillWidget
         Bill enteredBill;
         enteredBill.setName(m_billWidget->getNameInput()->text());
         enteredBill.setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
         enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
 
+        // Default the bill to not having been paid yet
+        enteredBill.setPaymentStatus(false);
+
         // Insert the Bill object into the map with a key of the name of the bill
         m_billMap.insert(m_billWidget->getNameInput()->text(), enteredBill);
-
-        // Write the Bill information out to the config file
-        m_settings.beginGroup(m_billWidget->getNameInput()->text());
-        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
-        m_settings.endGroup();
-        m_settings.sync();
     }
 }
 
@@ -401,6 +438,8 @@ void MainWindow::saveBillAndDisplayDashboard()
     // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
     m_billWidget->hide();
 
+    m_amountAvailableEdit->setText(QString::number(m_amountAvailable));
+
     // Create the bill table widget using the bill map
     createTableWidgetUsingMap();
 
@@ -415,7 +454,7 @@ void MainWindow::askForTotalAmountAvailable()
     bool isTotalAmountAvailableRecorded;
 
     // Set up the input dialog box with appropriate text and input restrictions and store the result
-    double amountAvailable = QInputDialog::getDouble(this, m_ASK_FOR_AMOUNT_AVAILABLE_TITLE, m_ASK_FOR_AMOUNT_AVAILABLE_TEXT, m_DEFAULT_AMOUNT_AVAILABLE, m_MIN_AMOUNT_AVAILABLE, m_MAX_AMOUNT_AVAILABLE, m_NUM_DECIMAL_PLACES,
+    double amountAvailable = QInputDialog::getDouble(this, m_TOTAL_AMOUNT_AVAILABLE, m_ASK_FOR_AMOUNT_AVAILABLE_TEXT, m_DEFAULT_AMOUNT_AVAILABLE, m_MIN_AMOUNT_AVAILABLE, m_MAX_AMOUNT_AVAILABLE, m_NUM_DECIMAL_PLACES,
                                                      &isTotalAmountAvailableRecorded, Qt::WindowFlags(), m_AMOUNT_AVAILABLE_STEP_SIZE);
 
     // If the user pressed ok
