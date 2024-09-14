@@ -34,7 +34,7 @@ MainWindow::MainWindow()
     // Create the amount available label and set its location and text
     m_amountAvailableLabel = new QLabel(this);
     m_amountAvailableLabel->setGeometry(0, 0, 150, 20);
-    m_amountAvailableLabel->setText(m_TOTAL_AMOUNT_AVAILABLE + ":");
+    m_amountAvailableLabel->setText(m_TOTAL_AMOUNT_AVAILABLE_STRING + ":");
 
     // Create the amount available line edit and set its location
     m_amountAvailableEdit = new QLineEdit(this);
@@ -219,14 +219,14 @@ void MainWindow::readConfigAndCreateUI()
                     if(value.isEmpty())
                     {
                         // Default the amount available to zero
-                        m_amountAvailable = 0.00;
+                        m_totalAmountAvailable = 0.00;
                     }
 
                     // If an amount available was found
                     else
                     {
                         // Update the amount available to the config file's contents
-                        m_amountAvailable = value.toDouble();
+                        m_totalAmountAvailable = value.toDouble();
                     }
                 }
 
@@ -270,7 +270,7 @@ void MainWindow::readConfigAndCreateUI()
             }
         }
 
-        m_amountAvailableEdit->setText(QString::number(m_amountAvailable));
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 
         // Create the table widget using the bill map's contents
         createTableWidgetUsingMap();
@@ -453,7 +453,7 @@ void MainWindow::saveBillAndDisplayDashboard()
     // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
     m_billWidget->hide();
 
-    m_amountAvailableEdit->setText(QString::number(m_amountAvailable));
+    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 
     // Create the bill table widget using the bill map
     createTableWidgetUsingMap();
@@ -469,14 +469,14 @@ void MainWindow::askForTotalAmountAvailable()
     bool isTotalAmountAvailableRecorded;
 
     // Set up the input dialog box with appropriate text and input restrictions and store the result
-    double amountAvailable = QInputDialog::getDouble(this, m_TOTAL_AMOUNT_AVAILABLE, m_ASK_FOR_AMOUNT_AVAILABLE_TEXT, m_DEFAULT_AMOUNT_AVAILABLE, m_MIN_AMOUNT_AVAILABLE, m_MAX_AMOUNT_AVAILABLE, m_NUM_DECIMAL_PLACES,
+    double amountAvailable = QInputDialog::getDouble(this, m_TOTAL_AMOUNT_AVAILABLE_STRING, m_ASK_FOR_AMOUNT_AVAILABLE_TEXT, m_DEFAULT_AMOUNT_AVAILABLE, m_MIN_AMOUNT_AVAILABLE, m_MAX_AMOUNT_AVAILABLE, m_NUM_DECIMAL_PLACES,
                                                      &isTotalAmountAvailableRecorded, Qt::WindowFlags(), m_AMOUNT_AVAILABLE_STEP_SIZE);
 
     // If the user pressed ok
     if(isTotalAmountAvailableRecorded)
     {
         // Store the total amount available entered, if nothing was entered this defaults to $0.00
-        m_amountAvailable = amountAvailable;
+        m_totalAmountAvailable = amountAvailable;
 
         // Attempt to open the config file
         QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
@@ -495,7 +495,7 @@ void MainWindow::askForTotalAmountAvailable()
             m_settings.beginGroup(m_FUNDS_INFORMATION_GROUP_LABEL);
 
             // Write the total funds available out to the config file
-            m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_amountAvailable);
+            m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_totalAmountAvailable);
             m_settings.endGroup();
             m_settings.sync();
 
@@ -528,6 +528,8 @@ void MainWindow::updateConfigFromUI()
     {
         m_billMap.clear();
 
+        m_totalAmountAvailable = m_amountAvailableEdit->text().toDouble();
+
         for(int row = 0; row < m_billTableWidget->rowCount(); row++)
         {
             QString billName = m_billTableWidget->item(row, 0)->text();
@@ -558,20 +560,25 @@ void MainWindow::updateConfigFromUI()
                 else
                 {
                     m_billMap[billName].setPaymentStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
+
+                    if(m_billMap[billName].getPaymentStatus() == true)
+                    {
+                        m_totalAmountAvailable -= m_billMap[billName].getAmountDue();
+                    }
                 }
             }
         }
     }
 
-    m_settings.clear();
+    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 
-    m_amountAvailable = m_amountAvailableEdit->text().toDouble();
+    m_settings.clear();
 
     // Create the funds information group
     m_settings.beginGroup(m_FUNDS_INFORMATION_GROUP_LABEL);
 
     // Write the total funds available out to the config file
-    m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_amountAvailable);
+    m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_totalAmountAvailable);
     m_settings.endGroup();
     m_settings.sync();
 
