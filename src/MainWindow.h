@@ -56,6 +56,8 @@ public slots:
      */
     void saveBillAndDisplayDashboard();
 
+    void updateConfigFromUI();
+
 private:
 
     /**
@@ -101,8 +103,21 @@ private:
      */
     void readConfigAndCreateUI();
 
+    /**
+     * @brief Checks a payment status and returns "Paid" or "Not Paid" if the status is true or false respectively.
+     * @param p_isBillPaid - Payment status as a boolean, true or false.
+     * @return The payment status as a string.
+     */
     QString paymentStatusBooleanToString(bool p_isBillPaid);
+
+    /**
+     * @brief Checks a payment status and returns true or false if the status is "Paid" or "Not Paid" respectively.
+     * @param p_paymentStatus - Payment status as a string, "Paid" or "Not Paid".
+     * @return The payment status as a boolean.
+     */
     bool paymentStatusStringToBoolean(QString p_paymentStatus);
+
+    QDate convertDateStringToDate(QString p_dateString);
 
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
@@ -130,9 +145,14 @@ private:
     const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable"; //!< The total funds available key which maps to the total funds available value.
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
-    const QString m_BILL_PAYMENT_STATUS_KEY = "PaymentStatus";
-    const QString m_PAID_STRING = "Paid";
-    const QString m_NOT_PAID_STRING = "Not Paid";
+    const QString m_BILL_PAYMENT_STATUS_KEY = "PaymentStatus"; //!< The payment status key which maps to whether or not a bill has been paid.
+    const QString m_BILL_NAME_COLUMN_HEADER_STRING = "Bill Name";
+    const QString m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING = "Amount Due";
+    const QString m_BILL_DUE_DATE_COLUMN_HEADER_STRING = "Due Date";
+    const QString m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING = "Payment Status";
+    const QString m_PAID_STRING = "Paid"; //!< Payment status of paid represented as a string.
+    const QString m_NOT_PAID_STRING = "Not Paid"; //!< Payment status of not paid represented as a string.
+    const QString m_SAVE_STRING = "Save"; //!< Save represented as a string.
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
@@ -140,5 +160,7 @@ private:
 
     QLabel *m_amountAvailableLabel; //!< The label for the total amount available.
     QLineEdit *m_amountAvailableEdit; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
+
+    QPushButton *m_saveButton;
 };
 #endif // MAINWINDOW_H
