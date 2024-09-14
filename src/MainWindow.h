@@ -39,13 +39,43 @@ public slots:
      */
     void terminateApplication();
 
+    /**
+     * @brief Attempts to open the config file, if successful a new Bill object is created for the current information inputted into the BillWidget.
+     * Information is also written as a new bill entry in the config file.
+     */
+    void openConfigForBillCreation();
+
+    /**
+     * @brief Calls the openConfigForBillCreation() helper method, before the BillWidget is reset for entry of another bill.
+     */
     void saveBillAndDisplayBillWidget();
+
+    /**
+     * @brief Calls the openConfigForBillCreation() helper method, before the BillWidget is hidden.
+     * The bill map is then iterated over, and its contents are used to display financial information to the user.
+     */
     void saveBillAndDisplayDashboard();
 
 private:
 
+    /**
+     * @brief Creates a message box in the event that the config file was unable to be generated in the desired directory before terminating the application.
+     */
     void createConfigFileGenerateFailureBox();
+
+    /**
+     * @brief Creates a message box in the event that the attempting to open the config file resulted in an error.
+     *  If the user chooses to press the "Ok" button, the welcome sequence will initiate where the user will provide their financial information again.
+     *  If the user chooses to press the "Close" button, the application will terminate.
+     */
     void createCorruptConfigFileBox();
+
+    /**
+     * @brief Creates a message box in the event that an invalid key was found in the config file.
+     * Warns the user to correct the config file, before terminating the application.
+     */
+    void createInvalidKeyBox();
+
     void attemptConfigFileGeneration();
     /**
      * @brief Generates a message box to welcome a first time user.
@@ -59,8 +89,17 @@ private:
      */
     void askForTotalAmountAvailable();
 
+    /**
+     * @brief Sets some preliminary attributes of the bill table widget before iterating over the bill map.
+     * Uses the bill map's contents to create the bill table widget before displaying the financial information to the user.
+     */
+    void createTableWidgetUsingMap();
+
+    /**
+     * @brief In the event that a config file already existed in the desired directory, read the config file and store its contents in the bill map.
+     * Then, iterate over the bill map and use its contents to display the user's financial information.
+     */
     void readConfigAndCreateUI();
-    void createInvalidKeyBox();
 
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
@@ -90,7 +129,7 @@ private:
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
-    QMap<QString, Bill> m_billMap;
-    QTableWidget *m_billTableWidget;
+    QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
+    QTableWidget *m_billTableWidget; //!< Table widget displaying inputted bill information.
 };
 #endif // MAINWINDOW_H
