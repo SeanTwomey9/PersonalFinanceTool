@@ -153,6 +153,7 @@ private:
     const QString m_PAID_STRING = "Paid"; //!< Payment status of paid represented as a string.
     const QString m_NOT_PAID_STRING = "Not Paid"; //!< Payment status of not paid represented as a string.
     const QString m_SAVE_STRING = "Save"; //!< Save represented as a string.
+    const QString m_DATE_STRING_FORMAT = "M/d/yyyy"; //!< The format to use when converting dates to strings.
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).

@@ -142,6 +142,8 @@ void MainWindow::createTableWidgetUsingMap()
         // Retrieve the current Bill being checked
         Bill currentBill = *billMapIterator;
         QDateEdit *dateEdit = new QDateEdit(this);
+
+        dateEdit->setCalendarPopup(true);
         dateEdit->setDate(currentBill.getDueDate());
 
         // Set the columns appropriately to the Bill's attributes
@@ -155,7 +157,6 @@ void MainWindow::createTableWidgetUsingMap()
     }
 
     // Resize the table widget's columns to fit the contents
-    m_billTableWidget->resizeColumnsToContents();
 }
 
 QDate MainWindow::convertDateStringToDate(QString p_dateString)
@@ -163,11 +164,11 @@ QDate MainWindow::convertDateStringToDate(QString p_dateString)
     // Adjust the due date string to only have single spaces within it
     QString dateNoSpaces = p_dateString.simplified();
 
-    // Remove spaces from due date string, this results in the due date string being in the form "dddMMMddyyyy" or "SatSep142024" for example
+    // Remove spaces from due date string, this results in the due date string being in the form "M/dd/yyyy" or "9/14/2024" for example
     dateNoSpaces.replace(" ", "");
 
     // Convert the due date string into a date object and return it
-    return QDate::fromString(dateNoSpaces,"dddMMMddyyyy");
+    return QDate::fromString(dateNoSpaces,"M/d/yyyy");
 }
 
 void MainWindow::readConfigAndCreateUI()
@@ -245,7 +246,7 @@ void MainWindow::readConfigAndCreateUI()
                         readBill.setAmountDue(value.toDouble());
 
                         // Insert the Bill into the map mapped to the name of the bill
-                        m_billMap.insert(groupLabel, readBill);
+                        m_billMap[groupLabel] = readBill;
                     }
 
                     // If the bill being checked already exists in the bill map, then we're checking its due date
@@ -414,7 +415,7 @@ void MainWindow::openConfigForBillCreation()
         // Write the Bill information out to the config file
         m_settings.beginGroup(m_billWidget->getNameInput()->text());
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(false));
         m_settings.endGroup();
         m_settings.sync();
@@ -534,25 +535,21 @@ void MainWindow::updateConfigFromUI()
             for(int col = 0; col < m_billTableWidget->columnCount(); col++)
             {
                 QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
-                qDebug() << "COLUMN HEADER: " << columnHeader;
 
                 if(columnHeader == m_BILL_NAME_COLUMN_HEADER_STRING)
                 {
                     Bill savedBill;
                     savedBill.setName(billName);
-                    qDebug() << "BILL NAME: " << billName;
                     m_billMap[billName] = savedBill;
                 }
 
                 else if(columnHeader == m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING)
                 {
-                    qDebug() << "UPDATING BILL AMOUNT DUE";
                     m_billMap[billName].setAmountDue(m_billTableWidget->item(row, col)->text().toDouble());
                 }
 
                 else if(columnHeader == m_BILL_DUE_DATE_COLUMN_HEADER_STRING)
                 {
-                    qDebug() << "UPDATING BILL DUE DATE";
                     QDateEdit *savedDate;
                     savedDate = (QDateEdit*)m_billTableWidget->cellWidget(row, col);
                     m_billMap[billName].setDueDate(savedDate->date());
@@ -560,7 +557,6 @@ void MainWindow::updateConfigFromUI()
 
                 else
                 {
-                    qDebug() << "UPDATING BILL PAYMENT STATUS";
                     m_billMap[billName].setPaymentStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
                 }
             }
@@ -586,12 +582,8 @@ void MainWindow::updateConfigFromUI()
     {
         Bill currentBill = *billMapIterator;
         m_settings.beginGroup(currentBill.getName());
-        qDebug() << "UPDATING BILL NAME TO : " << currentBill.getName();
-        qDebug() << "UPDATING BILL AMOUNT DUE TO: " << currentBill.getAmountDue();
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
-        qDebug() << "UPDATING BILL DUE DATE TO : " << currentBill.getDueDate().toString();
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString());
-        qDebug() << "UPDATING BILL PAYMENT STATUS TO : " << paymentStatusBooleanToString(currentBill.getPaymentStatus());
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.getPaymentStatus()));
         m_settings.endGroup();
     }
