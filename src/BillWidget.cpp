@@ -9,6 +9,39 @@
 
 #include "BillWidget.h"
 
+void deleteLabelIfNonNull(QLabel *p_label)
+{
+    // If the label has been created
+    if(p_label != nullptr)
+    {
+        // Delete it and set it to be null
+        delete p_label;
+        p_label = nullptr;
+    }
+}
+
+void deleteLineEditIfNonNull(QLineEdit *p_lineEdit)
+{
+    // If the line edit has been created
+    if(p_lineEdit != nullptr)
+    {
+        // Delete it and set it to be null
+        delete p_lineEdit;
+        p_lineEdit = nullptr;
+    }
+}
+
+void deleteButtonIfNonNull(QPushButton *p_button)
+{
+    // If the button has been created
+    if(p_button != nullptr)
+    {
+        // Delete it and set it to be null
+        delete p_button;
+        p_button = nullptr;
+    }
+}
+
 BillWidget::BillWidget(QObject *p_parent)
 {
     // Set the title of the BillWidget
@@ -26,44 +59,28 @@ BillWidget::BillWidget(QObject *p_parent)
 
 BillWidget::~BillWidget()
 {
-    if(m_nameLabel != nullptr)
-    {
-        delete m_nameLabel;
-        m_nameLabel = nullptr;
-    }
-}
+    // Properly delete dynamically allocated labels
+    deleteLabelIfNonNull(m_nameLabel);
+    deleteLabelIfNonNull(m_amountDueLabel);
+    deleteLabelIfNonNull(m_dueDateLabel);
 
-void BillWidget::deleteLabelIfNonNull(QLabel *p_label)
-{
-    // If the label has been created
-    if(p_label != nullptr)
-    {
-        // Delete it and set it to be null
-        delete p_label;
-        p_label = nullptr;
-    }
-}
+    // Properly delete dynamically allocated line edits
+    deleteLineEditIfNonNull(m_nameInput);
+    deleteLineEditIfNonNull(m_amountDueInput);
 
-void BillWidget::deleteLineEditIfNonNull(QLineEdit *p_lineEdit)
-{
-    // If the line edit has been created
-    if(p_lineEdit != nullptr)
+    // Properly delete dynamically allocated buttons
+    deleteButtonIfNonNull(m_closeButton);
+    deleteButtonIfNonNull(m_enterAnotherButton);
+    deleteButtonIfNonNull(m_doneButton);
+
+    // If the due date date edit was created successfully
+    if(m_dueDateInput != nullptr)
     {
         // Delete it and set it to be null
-        delete p_lineEdit;
-        p_lineEdit = nullptr;
+        delete m_dueDateInput;
+        m_dueDateInput = nullptr;
     }
-}
 
-
-void BillWidget::deleteButtonIfNonNull(QPushButton *p_button)
-{
-
-    if(p_button != nullptr)
-    {
-        delete p_button;
-        p_button = nullptr;
-    }
 }
 
 void BillWidget::initializeWidget()

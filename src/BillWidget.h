@@ -17,6 +17,24 @@
 #include <QGridLayout>
 #include <QPushButton>
 
+/**
+ * @brief Properly deletes a dynamically allocated label pointer, as long as it was created properly.
+ * @param p_label - The label pointer to be deleted.
+ */
+void deleteLabelIfNonNull(QLabel *p_label);
+
+/**
+ * @brief Properly deletes a dynamically allocated line edit pointer, as long as it was created properly.
+ * @param p_lineEdit - The line edit pointer to be deleted.
+ */
+void deleteLineEditIfNonNull(QLineEdit *p_lineEdit);
+
+/**
+ * @brief Properly deletes a dynamically allocated button pointer, as long as it was created properly.
+ * @param p_button - The button pointer to be deleted.
+ */
+void deleteButtonIfNonNull(QPushButton *p_button);
+
 class BillWidget : public QWidget
 {
     Q_OBJECT
@@ -82,9 +100,6 @@ public:
 
 private:
 
-    void deleteLabelIfNonNull(QLabel *p_label);
-    void deleteLineEditIfNonNull(QLineEdit *p_lineEdit);
-    void deleteButtonIfNonNull(QPushButton *p_button);
 
     const QString m_WINDOW_TITLE = "Bill Entry"; //!< Title of the BillWidget window.
 

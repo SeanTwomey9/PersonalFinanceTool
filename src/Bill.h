@@ -58,7 +58,7 @@ public:
 
     /**
      * @brief Returns the funded status of the bill.
-     * @return m_isFunded - Represents whether or not the bill has been paid.
+     * @return m_isFunded - Represents whether or not the bill has been funded.
      */
     bool getFundedStatus();
 

@@ -17,6 +17,7 @@
 #include <QSettings>
 #include <QTableWidget>
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -104,18 +105,18 @@ private:
     void readConfigAndCreateUI();
 
     /**
-     * @brief Checks a payment status and returns "Paid" or "Not Paid" if the status is true or false respectively.
-     * @param p_isBillPaid - Payment status as a boolean, true or false.
-     * @return The payment status as a string.
+     * @brief Checks a funding status and returns "Funded" or "Not Funded" if the status is true or false respectively.
+     * @param p_isBillFunded - Funding status as a boolean, true or false.
+     * @return The funding status as a string.
      */
-    QString paymentStatusBooleanToString(bool p_isBillPaid);
+    QString fundingStatusBooleanToString(bool p_isBillFunded);
 
     /**
-     * @brief Checks a payment status and returns true or false if the status is "Paid" or "Not Paid" respectively.
-     * @param p_paymentStatus - Payment status as a string, "Paid" or "Not Paid".
-     * @return The payment status as a boolean.
+     * @brief Checks a funding status and returns true or false if the status is "Funded" or "Not Funded" respectively.
+     * @param p_fundingStatus - Funding status as a string, "Funded" or "Not Funded".
+     * @return The funding status as a boolean.
      */
-    bool paymentStatusStringToBoolean(QString p_paymentStatus);
+    bool fundingStatusStringToBoolean(QString p_fundingStatus);
 
     QDate convertDateStringToDate(QString p_dateString);
 
@@ -148,13 +149,13 @@ private:
     const QString m_TOTAL_FUNDS_AVAILABLE_KEY = "TotalFundsAvailable"; //!< The total funds available key which maps to the total funds available value.
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
-    const QString m_BILL_PAYMENT_STATUS_KEY = "PaymentStatus"; //!< The payment status key which maps to whether or not a bill has been paid.
+    const QString m_BILL_FUNDING_STATUS_KEY = "FundingStatus"; //!< The funding status key which maps to whether or not a bill has been funded.
     const QString m_BILL_NAME_COLUMN_HEADER_STRING = "Bill Name";
     const QString m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING = "Amount Due";
     const QString m_BILL_DUE_DATE_COLUMN_HEADER_STRING = "Due Date";
-    const QString m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING = "Payment Status";
-    const QString m_PAID_STRING = "Paid"; //!< Payment status of paid represented as a string.
-    const QString m_NOT_PAID_STRING = "Not Paid"; //!< Payment status of not paid represented as a string.
+    const QString m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING = "Funding Status";
+    const QString m_FUNDED_STRING = "Funded"; //!< Funded status of funded represented as a string.
+    const QString m_NOT_FUNDED_STRING = "Not Funded"; //!< Funded status of not funded represented as a string.
     const QString m_SAVE_STRING = "Save"; //!< Save represented as a string.
     const QString m_DATE_STRING_FORMAT = "M/d/yyyy"; //!< The format to use when converting dates to strings.
 
@@ -167,6 +168,6 @@ private:
 
     QPushButton *m_saveButton;
 
-    QList<Bill> m_paidBillsList;
+    QList<Bill> m_fundedBillsList;
 };
 #endif // MAINWINDOW_H

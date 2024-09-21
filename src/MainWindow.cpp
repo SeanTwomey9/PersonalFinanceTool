@@ -54,7 +54,30 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+    // If the bill widget has been created successfully
+    if(m_billWidget != nullptr)
+    {
+        // Delete it and set it to be null
+        delete m_billWidget;
+        m_billWidget = nullptr;
+    }
 
+    // Properly delete the amount available label
+    deleteLabelIfNonNull(m_amountAvailableLabel);
+
+    // Properly delete the amount available line edit
+    deleteLineEditIfNonNull(m_amountAvailableEdit);
+
+    // Properly delete the save button
+    deleteButtonIfNonNull(m_saveButton);
+
+    // If the bill table widget has been created successfully
+    if(m_billTableWidget != nullptr)
+    {
+        // Delete it and set it to be null
+        delete m_billTableWidget;
+        m_billTableWidget = nullptr;
+    }
 }
 
 void MainWindow::terminateApplication()
@@ -129,7 +152,7 @@ void MainWindow::createTableWidgetUsingMap()
     m_billTableWidget->setColumnCount(4);
 
     // Set the table widget headers to the appropriate fields each Bill displays
-    m_billTableWidget->setHorizontalHeaderLabels(QString(m_BILL_NAME_COLUMN_HEADER_STRING + ";" + m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING + ";" + m_BILL_DUE_DATE_COLUMN_HEADER_STRING + ";" + m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING).split(";"));
+    m_billTableWidget->setHorizontalHeaderLabels(QString(m_BILL_NAME_COLUMN_HEADER_STRING + ";" + m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING + ";" + m_BILL_DUE_DATE_COLUMN_HEADER_STRING + ";" + m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING).split(";"));
 
     // Initialize the row we're setting to zero
     int row = 0;
@@ -150,7 +173,7 @@ void MainWindow::createTableWidgetUsingMap()
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
         m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
         m_billTableWidget->setCellWidget(row, 2, dateEdit);
-        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(paymentStatusBooleanToString(currentBill.getFundedStatus())));
+        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(fundingStatusBooleanToString(currentBill.getFundedStatus())));
 
         // Increment the row for the next Bill
         row++;
@@ -236,7 +259,7 @@ void MainWindow::readConfigAndCreateUI()
                         // Set the Bill's name
                         readBill.setName(groupLabel);
 
-                        // Since the amount due will be read before the due date and the payment status, set the amount due of the Bill
+                        // Since the amount due will be read before the due date and the funding status, set the amount due of the Bill
                         readBill.setAmountDue(value.toDouble());
 
                         // Insert the Bill into the map mapped to the name of the bill
@@ -253,11 +276,11 @@ void MainWindow::readConfigAndCreateUI()
                             m_billMap[groupLabel].setDueDate(convertDateStringToDate(value));
                         }
 
-                        // Otherwise, the key label is the payment status
+                        // Otherwise, the key label is the funding status
                         else
                         {
-                            // Set the appropriate Bill's payment status in the bill map by converting the payment status string to a boolean
-                            m_billMap[groupLabel].setFundedStatus(paymentStatusStringToBoolean(value));
+                            // Set the appropriate Bill's funding status in the bill map by converting the funding status string to a boolean
+                            m_billMap[groupLabel].setFundedStatus(fundingStatusStringToBoolean(value));
                         }
                     }
                 }
@@ -379,16 +402,16 @@ void MainWindow::createCorruptConfigFileBox()
     }
 }
 
-QString MainWindow::paymentStatusBooleanToString(bool p_isBillPaid)
+QString MainWindow::fundingStatusBooleanToString(bool p_isBillFunded)
 {
-    // If the bill has been paid, return the paid string, otherwise return the not paid string
-    return p_isBillPaid ? m_PAID_STRING : m_NOT_PAID_STRING;
+    // If the bill has been funded, return the funded string, otherwise return the not funded string
+    return p_isBillFunded ? m_FUNDED_STRING : m_NOT_FUNDED_STRING;
 }
 
-bool MainWindow::paymentStatusStringToBoolean(QString p_paymentStatus)
+bool MainWindow::fundingStatusStringToBoolean(QString p_fundingStatus)
 {
-    // If the bill has a payment status of "Paid", return true, otherwise return false
-    return p_paymentStatus == m_PAID_STRING ? true : false;
+    // If the bill has a funding status of "Funded", return true, otherwise return false
+    return p_fundingStatus == m_FUNDED_STRING ? true : false;
 }
 
 QString MainWindow::removeSpaces(QString p_stringWithSpaces)
@@ -416,7 +439,7 @@ void MainWindow::openConfigForBillCreation()
         m_settings.beginGroup(removeSpaces(m_billWidget->getNameInput()->text()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString(m_DATE_STRING_FORMAT));
-        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(false));
+        m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(false));
         m_settings.endGroup();
         m_settings.sync();
 
@@ -426,7 +449,7 @@ void MainWindow::openConfigForBillCreation()
         enteredBill.setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
         enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
 
-        // Default the bill to not having been paid yet
+        // Default the bill to not having been funded yet
         enteredBill.setFundedStatus(false);
 
         // Insert the Bill object into the map with a key of the name of the bill
@@ -560,12 +583,12 @@ void MainWindow::updateConfigFromUI()
 
                 else
                 {
-                    m_billMap[billNameNoSpaces].setFundedStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
+                    m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
 
-                    if(m_billMap[billNameNoSpaces].getFundedStatus() == true && !m_paidBillsList.contains(savedBill))
+                    if(m_billMap[billNameNoSpaces].getFundedStatus() == true && !m_fundedBillsList.contains(savedBill))
                     {
                         m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
-                        m_paidBillsList.append(savedBill);
+                        m_fundedBillsList.append(savedBill);
                     }
                 }
             }
@@ -593,7 +616,7 @@ void MainWindow::updateConfigFromUI()
         m_settings.beginGroup(removeSpaces(currentBill.getName()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
-        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.getFundedStatus()));
+        m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(currentBill.getFundedStatus()));
         m_settings.endGroup();
     }
 

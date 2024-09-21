@@ -47,14 +47,14 @@ void Bill::setDueDate(QDate p_updatedDueDate)
 
 bool Bill::getFundedStatus()
 {
-    // Return the payment status
+    // Return the funded status
     return m_isFunded;
 }
 
-void Bill::setFundedStatus(bool p_updatedPaymentStatus)
+void Bill::setFundedStatus(bool p_updatedFundingStatus)
 {
     // Update the funded status
-    m_isFunded = p_updatedPaymentStatus;
+    m_isFunded = p_updatedFundingStatus;
 }
 
 
