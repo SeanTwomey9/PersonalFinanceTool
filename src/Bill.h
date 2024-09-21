@@ -30,6 +30,12 @@ public:
      */
     ~Bill() {};
 
+    /**
+     * @brief Allows for the comparison of Bill objects for equality
+     * @param p_firstBill - The first Bill object to compare.
+     * @param p_secondBill - The second Bill object to compare.
+     * @return True if the Bill objects are equal based on their name, amount due, due date, and funded status. False otherwise.
+     */
     friend bool operator == (const Bill &p_firstBill, const Bill &p_secondBill);
 
     /**
@@ -51,10 +57,10 @@ public:
     QDate getDueDate();
 
     /**
-     * @brief Returns the payment status of the bill.
-     * @return m_isPaid - Represents whether or not the bill has been paid.
+     * @brief Returns the funded status of the bill.
+     * @return m_isFunded - Represents whether or not the bill has been paid.
      */
-    bool getPaymentStatus();
+    bool getFundedStatus();
 
     /**
      * @brief Updates the bill's name.
@@ -75,17 +81,17 @@ public:
     void setDueDate(QDate p_updatedDueDate);
 
     /**
-     * @brief Updates the bill's payment status.
-     * @param p_updatedPaymentStatus - Updated payment status.
+     * @brief Updates the bill's funded status.
+     * @param p_updatedFundedStatus - Updated funded status.
      */
-    void setPaymentStatus(bool p_updatedPaymentStatus);
+    void setFundedStatus(bool p_updatedFundedStatus);
 
 private:
 
     QString m_name = ""; //!< The name of the bill, defaulted to an empty string.
     double m_amountDueDollars = 0.00; //!< The amount of money owed for the bill in dollars and cents, defaulted to zero.
     QDate m_dueDate; //!< The date that the bill is due, no default for now.
-    bool m_isPaid = false; //!< Whether or not the bill has been paid yet, defaulted to false.
+    bool m_isFunded = false; //!< Whether or not the bill has been funded yet, defaulted to false.
 
 signals:
 };

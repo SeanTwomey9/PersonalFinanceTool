@@ -42,7 +42,7 @@ MainWindow::MainWindow()
 
     // Create the bill table widget and set its location
     m_billTableWidget = new QTableWidget(this);
-    m_billTableWidget->setGeometry(0, 20, 500, 500);
+    m_billTableWidget->setGeometry(0, 50, 500, 500);
 
     m_saveButton = new QPushButton(this);
     m_saveButton->setText(m_SAVE_STRING);
@@ -150,7 +150,7 @@ void MainWindow::createTableWidgetUsingMap()
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
         m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
         m_billTableWidget->setCellWidget(row, 2, dateEdit);
-        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(paymentStatusBooleanToString(currentBill.getPaymentStatus())));
+        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(paymentStatusBooleanToString(currentBill.getFundedStatus())));
 
         // Increment the row for the next Bill
         row++;
@@ -257,7 +257,7 @@ void MainWindow::readConfigAndCreateUI()
                         else
                         {
                             // Set the appropriate Bill's payment status in the bill map by converting the payment status string to a boolean
-                            m_billMap[groupLabel].setPaymentStatus(paymentStatusStringToBoolean(value));
+                            m_billMap[groupLabel].setFundedStatus(paymentStatusStringToBoolean(value));
                         }
                     }
                 }
@@ -427,7 +427,7 @@ void MainWindow::openConfigForBillCreation()
         enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
 
         // Default the bill to not having been paid yet
-        enteredBill.setPaymentStatus(false);
+        enteredBill.setFundedStatus(false);
 
         // Insert the Bill object into the map with a key of the name of the bill
         m_billMap[removeSpaces(m_billWidget->getNameInput()->text())] = enteredBill;
@@ -560,9 +560,9 @@ void MainWindow::updateConfigFromUI()
 
                 else
                 {
-                    m_billMap[billNameNoSpaces].setPaymentStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
+                    m_billMap[billNameNoSpaces].setFundedStatus(paymentStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
 
-                    if(m_billMap[billNameNoSpaces].getPaymentStatus() == true && !m_paidBillsList.contains(savedBill))
+                    if(m_billMap[billNameNoSpaces].getFundedStatus() == true && !m_paidBillsList.contains(savedBill))
                     {
                         m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
                         m_paidBillsList.append(savedBill);
@@ -593,7 +593,7 @@ void MainWindow::updateConfigFromUI()
         m_settings.beginGroup(removeSpaces(currentBill.getName()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
-        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.getPaymentStatus()));
+        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.getFundedStatus()));
         m_settings.endGroup();
     }
 

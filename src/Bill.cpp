@@ -45,21 +45,22 @@ void Bill::setDueDate(QDate p_updatedDueDate)
     m_dueDate = p_updatedDueDate;
 }
 
-bool Bill::getPaymentStatus()
+bool Bill::getFundedStatus()
 {
     // Return the payment status
-    return m_isPaid;
+    return m_isFunded;
 }
 
-void Bill::setPaymentStatus(bool p_updatedPaymentStatus)
+void Bill::setFundedStatus(bool p_updatedPaymentStatus)
 {
-    // Update the payment status
-    m_isPaid = p_updatedPaymentStatus;
+    // Update the funded status
+    m_isFunded = p_updatedPaymentStatus;
 }
 
 
 bool operator == (const Bill &p_firstBill, const Bill &p_secondBill)
 {
+    // If the two Bill objects have equivalent names, amounts due, due dates, and funded status, true is returned. False otherwise
     return (p_firstBill.m_name == p_secondBill.m_name && p_firstBill.m_amountDueDollars == p_secondBill.m_amountDueDollars
-            && p_firstBill.m_dueDate == p_secondBill.m_dueDate && p_firstBill.m_isPaid == p_secondBill.m_isPaid);
+            && p_firstBill.m_dueDate == p_secondBill.m_dueDate && p_firstBill.m_isFunded == p_secondBill.m_isFunded);
 }

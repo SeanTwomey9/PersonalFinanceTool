@@ -11,12 +11,16 @@
 
 BillWidget::BillWidget(QObject *p_parent)
 {
+    // Set the title of the BillWidget
     this->setWindowTitle(m_WINDOW_TITLE);
 
     // Needed to make the widget appear without clicking the application icon
     this->setWindowModality(Qt::ApplicationModal);
 
+    // Create the labels, line edits, date edit, and push button objects
     initializeWidget();
+
+    // Organize the widgets into a grid layout
     createWidgetLayout();
 }
 
@@ -26,6 +30,39 @@ BillWidget::~BillWidget()
     {
         delete m_nameLabel;
         m_nameLabel = nullptr;
+    }
+}
+
+void BillWidget::deleteLabelIfNonNull(QLabel *p_label)
+{
+    // If the label has been created
+    if(p_label != nullptr)
+    {
+        // Delete it and set it to be null
+        delete p_label;
+        p_label = nullptr;
+    }
+}
+
+void BillWidget::deleteLineEditIfNonNull(QLineEdit *p_lineEdit)
+{
+    // If the line edit has been created
+    if(p_lineEdit != nullptr)
+    {
+        // Delete it and set it to be null
+        delete p_lineEdit;
+        p_lineEdit = nullptr;
+    }
+}
+
+
+void BillWidget::deleteButtonIfNonNull(QPushButton *p_button)
+{
+
+    if(p_button != nullptr)
+    {
+        delete p_button;
+        p_button = nullptr;
     }
 }
 
