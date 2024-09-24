@@ -44,10 +44,23 @@ MainWindow::MainWindow()
     m_billTableWidget = new QTableWidget(this);
     m_billTableWidget->setGeometry(0, 50, 500, 500);
 
+    // Create the save button and connect to the update config slot
     m_saveButton = new QPushButton(this);
-    m_saveButton->setText(m_SAVE_STRING);
-    m_saveButton->setGeometry(400, 0, 50, 30);
+    m_saveButton->setText(m_SAVE_BUTTON_TEXT);
+    m_saveButton->setGeometry(20, 400, 50, 30);
     connect(m_saveButton, SIGNAL(clicked()), this, SLOT(updateConfigFromUI()), Qt::AutoConnection);
+
+    m_addBillButton = new QPushButton(this);
+    m_addBillButton->setText(m_ADD_BILL_BUTTON_TEXT);
+    m_addBillButton->setGeometry(100,400, 120, 30);
+
+    m_deleteBillButton = new QPushButton(this);
+    m_deleteBillButton->setText(m_DELETE_BUTTON_TEXT);
+    m_deleteBillButton->setGeometry(240, 400, 50, 30);
+
+    m_fundBillButton = new QPushButton(this);
+    m_fundBillButton->setText(m_FUND_BILL_BUTTON_TEXT);
+    m_fundBillButton->setGeometry(310, 400, 100, 30);
 
     attemptConfigFileGeneration();
 }
@@ -70,6 +83,9 @@ MainWindow::~MainWindow()
 
     // Properly delete the save button
     deleteButtonIfNonNull(m_saveButton);
+    deleteButtonIfNonNull(m_addBillButton);
+    deleteButtonIfNonNull(m_deleteBillButton);
+    deleteButtonIfNonNull(m_fundBillButton);
 
     // If the bill table widget has been created successfully
     if(m_billTableWidget != nullptr)

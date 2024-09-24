@@ -142,7 +142,6 @@ private:
     const int m_NUM_DECIMAL_PLACES = 2; //!< The number of decimal places allowed in the total amount available input box.
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.0; //!< The step size for the up and down arrows in the total amount available input box.
     double m_totalAmountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
-    double m_totalSpentOnBills = 0.0;
 
     QSettings m_settings; //!< The QSettings object which reads and writes to the configuration file.
     const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation"; //!< The group label for the funds information section of the configuration file.
@@ -156,8 +155,12 @@ private:
     const QString m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING = "Funding Status";
     const QString m_FUNDED_STRING = "Funded"; //!< Funded status of funded represented as a string.
     const QString m_NOT_FUNDED_STRING = "Not Funded"; //!< Funded status of not funded represented as a string.
-    const QString m_SAVE_STRING = "Save"; //!< Save represented as a string.
     const QString m_DATE_STRING_FORMAT = "M/d/yyyy"; //!< The format to use when converting dates to strings.
+
+    const QString m_SAVE_BUTTON_TEXT = "Save"; //!< Save represented as a string.
+    const QString m_DELETE_BUTTON_TEXT = "Delete";
+    const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill";
+    const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill";
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
@@ -166,7 +169,10 @@ private:
     QLabel *m_amountAvailableLabel; //!< The label for the total amount available.
     QLineEdit *m_amountAvailableEdit; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
 
-    QPushButton *m_saveButton;
+    QPushButton *m_saveButton = nullptr; //!< Button used to save the current state of the tool to the configuration file for subsequent launches of the application.
+    QPushButton *m_deleteBillButton = nullptr;
+    QPushButton *m_addBillButton = nullptr;
+    QPushButton *m_fundBillButton = nullptr;
 
     QList<Bill> m_fundedBillsList;
 };
