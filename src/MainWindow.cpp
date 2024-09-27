@@ -53,6 +53,7 @@ MainWindow::MainWindow()
     m_addBillButton = new QPushButton(this);
     m_addBillButton->setText(m_ADD_BILL_BUTTON_TEXT);
     m_addBillButton->setGeometry(100,400, 120, 30);
+    connect(m_addBillButton, SIGNAL(clicked()), this, SLOT(showBillWidget()), Qt::AutoConnection);
 
     m_deleteBillButton = new QPushButton(this);
     m_deleteBillButton->setText(m_DELETE_BUTTON_TEXT);
@@ -478,6 +479,12 @@ void MainWindow::saveBillAndDisplayBillWidget()
     // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
     openConfigForBillCreation();
 
+    // Clear the BillWidget if the user elects to add another bill
+    clearBillWidget();
+}
+
+void MainWindow::clearBillWidget()
+{
     // Clear the BillWidget for entry of another bill
     m_billWidget->getNameInput()->clear();
     m_billWidget->getAmountDueInput()->clear();
@@ -500,6 +507,14 @@ void MainWindow::saveBillAndDisplayDashboard()
     // Show the window
     this->show();
 
+}
+void MainWindow::showBillWidget()
+{
+    // Make sure to clear the bill widget from the previous entry if the user chooses to add another bill from the dashboard
+    clearBillWidget();
+
+    // Display the bill widget so the user can add another bill
+    m_billWidget->show();
 }
 
 void MainWindow::askForTotalAmountAvailable()

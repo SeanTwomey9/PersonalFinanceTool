@@ -59,6 +59,8 @@ public slots:
 
     void updateConfigFromUI();
 
+    void showBillWidget();
+
 private:
 
     /**
@@ -121,6 +123,8 @@ private:
     QDate convertDateStringToDate(QString p_dateString);
 
     QString removeSpaces(QString p_stringWithSpaces);
+
+    void clearBillWidget();
 
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
