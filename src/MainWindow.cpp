@@ -692,7 +692,10 @@ void MainWindow::updateConfigFromUI()
 
                 else
                 {
-                    m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
+                    QComboBox *fundedStatusBox;
+                    fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
+                    QString fundingStatus = fundedStatusBox->currentText();
+                    m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(fundingStatus));
 
                     if(m_billMap[billNameNoSpaces].isFunded() == true && !m_fundedBillsList.contains(savedBill))
                     {
