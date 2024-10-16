@@ -81,6 +81,8 @@ private:
      */
     void createInvalidKeyBox();
 
+    void createMissingBillDetailsBox();
+
     void attemptConfigFileGeneration();
     /**
      * @brief Generates a message box to welcome a first time user.
@@ -140,6 +142,9 @@ private:
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TEXT = "Please enter the total amount of money available in USD."; //!< The total amount available informative text.
     const QString m_INVALID_KEY_BOX_TEXT = "Invalid Configuration File Key/Value Pair";
     const QString m_INVALID_KEY_BOX_INFO_TEXT = "A key/value pair from " + m_CONFIG_FILE_NAME + " is invalid. Please correct the file to have a single value per key and relaunch the application.";
+    const QString m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT = "Missing Bill Information";
+    const QString m_MISSING_BILL_DETAILS_BOX_INFO_TEXT = "Please enter all bill information.";
+
     const double m_DEFAULT_AMOUNT_AVAILABLE = 0.0; //!< The default amount of money available assigned if the user does not provide the actual amount.
     const double m_MIN_AMOUNT_AVAILABLE = 0.0; //!< The minimum amount the user can specify for the total amount of money they have available.
     const double m_MAX_AMOUNT_AVAILABLE = static_cast<double>(INT64_MAX); //!< The maximum amount the user can specify for the total amount of money they have available.

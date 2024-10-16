@@ -99,6 +99,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::terminateApplication()
 {
+    /*if(this->isVisible())
+    {
+
+    }*/
     // Terminate the application
     QCoreApplication::quit();
 }
@@ -235,6 +239,8 @@ void MainWindow::readConfigAndCreateUI()
             // If splitting the key did not result in both a group label and key
             if(splitKeys.size() < 2)
             {
+                // TODO: Pass the invalid key to the box to display to the user
+                // TODO: The box appears once for each incorrect pair, should the app just terminate after a single incorrect pair is found?
                 // Alert the user with an invalid key message box
                 createInvalidKeyBox();
             }
@@ -382,7 +388,7 @@ void MainWindow::welcomeFirstTimeUser()
 
 void MainWindow::createCorruptConfigFileBox()
 {
-    // Create the corrupt confile file QMessageBox with appropriate displayed text
+    // Create the corrupt config file QMessageBox with appropriate displayed text
     QMessageBox corruptBox;
     corruptBox.setText(m_CONFIG_CORRUPT_FILE_BOX_TITLE);
     corruptBox.setInformativeText(m_CONFIG_CORRUPT_FILE_BOX_INFO_TEXT);
@@ -394,28 +400,28 @@ void MainWindow::createCorruptConfigFileBox()
 
     switch(corruptBoxSelection)
     {
-    // If the user selected Ok
-    case QMessageBox::Ok :
-    {
-        // Kick off the welcome sequence to have the user re-enter their financial information to get back to a functional state
-        welcomeFirstTimeUser();
-        break;
-    }
+        // If the user selected Ok
+        case QMessageBox::Ok :
+        {
+            // Kick off the welcome sequence to have the user re-enter their financial information to get back to a functional state
+            welcomeFirstTimeUser();
+            break;
+        }
 
-        // If the user selected Close
-    case QMessageBox::Close :
-    {
-        // Terminate the application
-        emit conditionToTerminateMet();
-        break;
-    }
+            // If the user selected Close
+        case QMessageBox::Close :
+        {
+            // Terminate the application
+            emit conditionToTerminateMet();
+            break;
+        }
 
-    default:
-    {
-        // Default to have the user re-enter their information
-        welcomeFirstTimeUser();
-        break;
-    }
+        default:
+        {
+            // Default to have the user re-enter their information
+            welcomeFirstTimeUser();
+            break;
+        }
     }
 }
 
@@ -474,13 +480,53 @@ void MainWindow::openConfigForBillCreation()
     }
 }
 
+void MainWindow::createMissingBillDetailsBox()
+{
+        // Create the missing bill name QMessageBox with appropriate displayed text
+        QMessageBox missingBillDetailsBox;
+        missingBillDetailsBox.setText(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT);
+        missingBillDetailsBox.setInformativeText(m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
+
+        // Give the user the options of "Ok'ing" the error
+        missingBillDetailsBox.setStandardButtons(QMessageBox::Ok);
+
+        int missingBillDetailsBoxSelection = missingBillDetailsBox.exec();
+
+        switch(missingBillDetailsBoxSelection)
+        {
+            // If the user selected Ok
+            case QMessageBox::Ok :
+            {
+                // Have the user return to the bill widget to enter the missing bill name
+                break;
+            }
+
+            default:
+            {
+                // Default to have the user return to the bill widget to enter the missing bill name
+                break;
+            }
+        }
+}
+
 void MainWindow::saveBillAndDisplayBillWidget()
 {
-    // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
-    openConfigForBillCreation();
+    // If the bill name or amount due fields are empty
+    if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
+    {
+        // Create the missing bill details message box
+        createMissingBillDetailsBox();
+    }
 
-    // Clear the BillWidget if the user elects to add another bill
-    clearBillWidget();
+
+    else
+    {
+        // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
+        openConfigForBillCreation();
+
+        // Clear the BillWidget if the user elects to add another bill
+        clearBillWidget();
+    }
 }
 
 void MainWindow::clearBillWidget()
@@ -493,20 +539,43 @@ void MainWindow::clearBillWidget()
 
 void MainWindow::saveBillAndDisplayDashboard()
 {
-    // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
-    openConfigForBillCreation();
+    if(m_billWidget->getNameInput()->text().isEmpty() && m_billWidget->getAmountDueInput()->text().isEmpty())
+    {
+        // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
+        m_billWidget->hide();
 
-    // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
-    m_billWidget->hide();
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 
-    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+        // Create the bill table widget using the bill map
+        createTableWidgetUsingMap();
 
-    // Create the bill table widget using the bill map
-    createTableWidgetUsingMap();
+        // Show the window
+        this->show();
+    }
 
-    // Show the window
-    this->show();
+    // If the bill name field is empty
+    else if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
+    {
+        // Create the missing bill details message box
+        createMissingBillDetailsBox();
+    }
 
+    else
+    {
+        // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
+        openConfigForBillCreation();
+
+        // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
+        m_billWidget->hide();
+
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+
+        // Create the bill table widget using the bill map
+        createTableWidgetUsingMap();
+
+        // Show the window
+        this->show();
+    }
 }
 void MainWindow::showBillWidget()
 {
