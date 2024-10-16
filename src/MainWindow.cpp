@@ -16,6 +16,7 @@
 #include <QInputDialog>
 #include <QApplication>
 #include <QComboBox>
+#include <QDebug>
 
 MainWindow::MainWindow()
 {
@@ -697,14 +698,26 @@ void MainWindow::updateConfigFromUI()
                     QString fundingStatus = fundedStatusBox->currentText();
                     m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(fundingStatus));
 
-                    if(m_billMap[billNameNoSpaces].isFunded() == true && !m_fundedBillsList.contains(savedBill))
+                    if(m_billMap[billNameNoSpaces].isFunded() && !m_fundedBillsList.contains(savedBill))
                     {
                         m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
                         m_fundedBillsList.append(savedBill);
                     }
+
+                    else if(!m_billMap[billNameNoSpaces].isFunded() && m_fundedBillsList.contains(savedBill))
+                    {
+                        m_totalAmountAvailable += m_billMap[billNameNoSpaces].getAmountDue();
+                        m_fundedBillsList.removeOne(savedBill);
+                    }
                 }
             }
         }
+    }
+
+    QList<Bill>::iterator i;
+    for(i = m_fundedBillsList.begin(); i != m_fundedBillsList.end(); ++i)
+    {
+        qDebug() << "FUNDED BILL: " << i->getName();
     }
 
     m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
