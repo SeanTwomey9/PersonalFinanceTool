@@ -60,7 +60,7 @@ public:
      * @brief Returns the funded status of the bill.
      * @return m_isFunded - Represents whether or not the bill has been funded.
      */
-    bool getFundedStatus();
+    bool isFunded();
 
     /**
      * @brief Updates the bill's name.
@@ -93,7 +93,6 @@ private:
     QDate m_dueDate; //!< The date that the bill is due, no default for now.
     bool m_isFunded = false; //!< Whether or not the bill has been funded yet, defaulted to false.
 
-signals:
 };
 
 #endif // BILL_H

@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QApplication>
+#include <QComboBox>
 
 MainWindow::MainWindow()
 {
@@ -185,22 +186,30 @@ void MainWindow::createTableWidgetUsingMap()
     {
         // Retrieve the current Bill being checked
         Bill currentBill = *billMapIterator;
+
+        // Create a date edit for displaying and allowing the editing of the bill's due date
         QDateEdit *dateEdit = new QDateEdit(this);
 
+        // Allow the display of a calendar for editing purposes
         dateEdit->setCalendarPopup(true);
+
+        // Set the date edit based on the bill's due date
         dateEdit->setDate(currentBill.getDueDate());
+
+        QComboBox *fundedStatusBox = new QComboBox(this);
+        fundedStatusBox->addItem(m_NOT_FUNDED_STRING);
+        fundedStatusBox->addItem(m_FUNDED_STRING);
+        currentBill.isFunded() ? fundedStatusBox->setCurrentIndex(1) : fundedStatusBox->setCurrentIndex(0);
 
         // Set the columns appropriately to the Bill's attributes
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
         m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
         m_billTableWidget->setCellWidget(row, 2, dateEdit);
-        m_billTableWidget->setItem(row, 3, new QTableWidgetItem(fundingStatusBooleanToString(currentBill.getFundedStatus())));
+        m_billTableWidget->setCellWidget(row, 3, fundedStatusBox);
 
         // Increment the row for the next Bill
         row++;
     }
-
-    // Resize the table widget's columns to fit the contents
 }
 
 QDate MainWindow::convertDateStringToDate(QString p_dateString)
@@ -685,7 +694,7 @@ void MainWindow::updateConfigFromUI()
                 {
                     m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(m_billTableWidget->item(row, col)->text()));
 
-                    if(m_billMap[billNameNoSpaces].getFundedStatus() == true && !m_fundedBillsList.contains(savedBill))
+                    if(m_billMap[billNameNoSpaces].isFunded() == true && !m_fundedBillsList.contains(savedBill))
                     {
                         m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
                         m_fundedBillsList.append(savedBill);
@@ -716,7 +725,7 @@ void MainWindow::updateConfigFromUI()
         m_settings.beginGroup(removeSpaces(currentBill.getName()));
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
-        m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(currentBill.getFundedStatus()));
+        m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(currentBill.isFunded()));
         m_settings.endGroup();
     }
 
