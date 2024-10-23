@@ -64,6 +64,7 @@ MainWindow::MainWindow()
     m_fundBillButton = new QPushButton(this);
     m_fundBillButton->setText(m_FUND_BILL_BUTTON_TEXT);
     m_fundBillButton->setGeometry(310, 400, 100, 30);
+    connect(m_fundBillButton, SIGNAL(clicked()), this, SLOT(fundBillOnClick()), Qt::AutoConnection);
 
     attemptConfigFileGeneration();
 }
@@ -714,12 +715,6 @@ void MainWindow::updateConfigFromUI()
         }
     }
 
-    QList<Bill>::iterator i;
-    for(i = m_fundedBillsList.begin(); i != m_fundedBillsList.end(); ++i)
-    {
-        qDebug() << "FUNDED BILL: " << i->getName();
-    }
-
     m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 
     m_settings.clear();
@@ -746,4 +741,22 @@ void MainWindow::updateConfigFromUI()
     }
 
     m_settings.sync();
+}
+
+void MainWindow::fundBillOnClick()
+{
+    for(int row = 0; row < m_billTableWidget->rowCount(); row++)
+    {
+        for(int col = 0; col < m_billTableWidget->columnCount(); col++)
+        {
+            QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
+
+            if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING && m_billTableWidget->item(row, 0)->isSelected())
+            {
+                QComboBox *fundedStatusBox;
+                fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
+                fundedStatusBox->setCurrentIndex(1);
+            }
+        }
+    }
 }

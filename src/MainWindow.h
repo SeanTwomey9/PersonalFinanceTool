@@ -61,6 +61,8 @@ public slots:
 
     void showBillWidget();
 
+    void fundBillOnClick();
+
 private:
 
     /**
