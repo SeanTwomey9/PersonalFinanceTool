@@ -54,7 +54,7 @@ MainWindow::MainWindow()
 
     m_addBillButton = new QPushButton(this);
     m_addBillButton->setText(m_ADD_BILL_BUTTON_TEXT);
-    m_addBillButton->setGeometry(100,400, 120, 30);
+    m_addBillButton->setGeometry(100, 400, 120, 30);
     connect(m_addBillButton, SIGNAL(clicked()), this, SLOT(showBillWidget()), Qt::AutoConnection);
 
     m_deleteBillButton = new QPushButton(this);
@@ -65,6 +65,11 @@ MainWindow::MainWindow()
     m_fundBillButton->setText(m_FUND_BILL_BUTTON_TEXT);
     m_fundBillButton->setGeometry(310, 400, 100, 30);
     connect(m_fundBillButton, SIGNAL(clicked()), this, SLOT(fundBillOnClick()), Qt::AutoConnection);
+
+    m_defundBillButton = new QPushButton(this);
+    m_defundBillButton->setText(m_DEFUND_BILL_BUTTON_TEXT);
+    m_defundBillButton->setGeometry(380, 400, 100, 30);
+    connect(m_defundBillButton, SIGNAL(clicked()), this, SLOT(defundBillOnClick()), Qt::AutoConnection);
 
     attemptConfigFileGeneration();
 }
@@ -756,6 +761,24 @@ void MainWindow::fundBillOnClick()
                 QComboBox *fundedStatusBox;
                 fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
                 fundedStatusBox->setCurrentIndex(1);
+            }
+        }
+    }
+}
+
+void MainWindow::defundBillOnClick()
+{
+    for(int row = 0; row < m_billTableWidget->rowCount(); row++)
+    {
+        for(int col = 0; col < m_billTableWidget->columnCount(); col++)
+        {
+            QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
+
+            if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING && m_billTableWidget->item(row, 0)->isSelected())
+            {
+                QComboBox *fundedStatusBox;
+                fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
+                fundedStatusBox->setCurrentIndex(0);
             }
         }
     }

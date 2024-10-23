@@ -63,6 +63,8 @@ public slots:
 
     void fundBillOnClick();
 
+    void defundBillOnClick();
+
 private:
 
     /**
@@ -172,6 +174,7 @@ private:
     const QString m_DELETE_BUTTON_TEXT = "Delete";
     const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill";
     const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill";
+    const QString m_DEFUND_BILL_BUTTON_TEXT = "Defund Bill";
 
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
@@ -184,6 +187,7 @@ private:
     QPushButton *m_deleteBillButton = nullptr;
     QPushButton *m_addBillButton = nullptr;
     QPushButton *m_fundBillButton = nullptr;
+    QPushButton *m_defundBillButton = nullptr;
 
     QList<Bill> m_fundedBillsList;
 };
