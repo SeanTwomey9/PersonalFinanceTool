@@ -44,32 +44,33 @@ MainWindow::MainWindow()
 
     // Create the bill table widget and set its location
     m_billTableWidget = new QTableWidget(this);
-    m_billTableWidget->setGeometry(0, 50, 500, 500);
+    m_billTableWidget->setGeometry(0, 100, 500, 500);
 
     // Create the save button and connect to the update config slot
     m_saveButton = new QPushButton(this);
     m_saveButton->setText(m_SAVE_BUTTON_TEXT);
-    m_saveButton->setGeometry(20, 400, 50, 30);
     connect(m_saveButton, SIGNAL(clicked()), this, SLOT(updateConfigFromUI()), Qt::AutoConnection);
 
     m_addBillButton = new QPushButton(this);
     m_addBillButton->setText(m_ADD_BILL_BUTTON_TEXT);
-    m_addBillButton->setGeometry(100, 400, 120, 30);
+    //m_addBillButton->setGeometry(100, 400, 120, 30);
     connect(m_addBillButton, SIGNAL(clicked()), this, SLOT(showBillWidget()), Qt::AutoConnection);
 
     m_deleteBillButton = new QPushButton(this);
     m_deleteBillButton->setText(m_DELETE_BUTTON_TEXT);
-    m_deleteBillButton->setGeometry(240, 400, 50, 30);
+   // m_deleteBillButton->setGeometry(240, 400, 50, 30);
 
     m_fundBillButton = new QPushButton(this);
     m_fundBillButton->setText(m_FUND_BILL_BUTTON_TEXT);
-    m_fundBillButton->setGeometry(310, 400, 100, 30);
+    //m_fundBillButton->setGeometry(310, 400, 100, 30);
     connect(m_fundBillButton, SIGNAL(clicked()), this, SLOT(fundBillOnClick()), Qt::AutoConnection);
 
     m_defundBillButton = new QPushButton(this);
     m_defundBillButton->setText(m_DEFUND_BILL_BUTTON_TEXT);
-    m_defundBillButton->setGeometry(380, 400, 100, 30);
+    //m_defundBillButton->setGeometry(380, 400, 100, 30);
     connect(m_defundBillButton, SIGNAL(clicked()), this, SLOT(defundBillOnClick()), Qt::AutoConnection);
+
+    createButtonGridLayout();
 
     attemptConfigFileGeneration();
 }
@@ -95,6 +96,7 @@ MainWindow::~MainWindow()
     deleteButtonIfNonNull(m_addBillButton);
     deleteButtonIfNonNull(m_deleteBillButton);
     deleteButtonIfNonNull(m_fundBillButton);
+    deleteButtonIfNonNull(m_defundBillButton);
 
     // If the bill table widget has been created successfully
     if(m_billTableWidget != nullptr)
@@ -105,12 +107,20 @@ MainWindow::~MainWindow()
     }
 }
 
+void MainWindow::createButtonGridLayout()
+{
+    m_buttonGridLayout = new QGridLayout(this);
+    m_buttonGridLayout->addWidget(m_addBillButton, 0, 0, Qt::AlignmentFlag::AlignLeft);
+    m_buttonGridLayout->addWidget(m_deleteBillButton, 0, 1);
+    m_buttonGridLayout->addWidget(m_fundBillButton, 1, 0);
+    m_buttonGridLayout->addWidget(m_defundBillButton, 1, 1);
+    m_buttonGridLayout->addWidget(m_saveButton, 2, 0);
+    m_buttonGridLayout->setHorizontalSpacing(5);
+    m_buttonGridLayout->setGeometry(QRect(250, -5, 250, 100));
+}
+
 void MainWindow::terminateApplication()
 {
-    /*if(this->isVisible())
-    {
-
-    }*/
     // Terminate the application
     QCoreApplication::quit();
 }

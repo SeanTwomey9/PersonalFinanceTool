@@ -132,6 +132,8 @@ private:
 
     void clearBillWidget();
 
+    void createButtonGridLayout();
+
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
@@ -190,5 +192,7 @@ private:
     QPushButton *m_defundBillButton = nullptr;
 
     QList<Bill> m_fundedBillsList;
+
+    QGridLayout *m_buttonGridLayout = nullptr;
 };
 #endif // MAINWINDOW_H
