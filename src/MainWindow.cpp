@@ -330,6 +330,11 @@ void MainWindow::readConfigAndCreateUI()
                         {
                             // Set the appropriate Bill's funding status in the bill map by converting the funding status string to a boolean
                             m_billMap[groupLabel].setFundedStatus(fundingStatusStringToBoolean(value));
+
+                            if(m_billMap[groupLabel].isFunded())
+                            {
+                                m_fundedBillsList.append(m_billMap[groupLabel].getName());
+                            }
                         }
                     }
                 }
@@ -714,21 +719,30 @@ void MainWindow::updateConfigFromUI()
                     QString fundingStatus = fundedStatusBox->currentText();
                     m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(fundingStatus));
 
-                    if(m_billMap[billNameNoSpaces].isFunded() && !m_fundedBillsList.contains(savedBill))
+                    if(m_billMap[billNameNoSpaces].isFunded() && !m_fundedBillsList.contains(savedBill.getName()))
                     {
                         m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
-                        m_fundedBillsList.append(savedBill);
+                        m_fundedBillsList.append(savedBill.getName());
                     }
 
-                    else if(!m_billMap[billNameNoSpaces].isFunded() && m_fundedBillsList.contains(savedBill))
+                    else if(!m_billMap[billNameNoSpaces].isFunded() && m_fundedBillsList.contains(savedBill.getName()))
                     {
                         m_totalAmountAvailable += m_billMap[billNameNoSpaces].getAmountDue();
-                        m_fundedBillsList.removeOne(savedBill);
+                        m_fundedBillsList.removeOne(savedBill.getName());
                     }
                 }
             }
         }
     }
+
+    QList<QString>::iterator i;
+
+    for(i = m_fundedBillsList.begin(); i != m_fundedBillsList.end(); ++i)
+    {
+        qDebug() << "FUNDED BILL: " << *i;
+    }
+
+    qDebug() << "AMOUNT AVAILABLE: " << m_totalAmountAvailable;
 
     m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
 

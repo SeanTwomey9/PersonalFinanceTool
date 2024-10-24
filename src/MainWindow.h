@@ -191,7 +191,7 @@ private:
     QPushButton *m_fundBillButton = nullptr;
     QPushButton *m_defundBillButton = nullptr;
 
-    QList<Bill> m_fundedBillsList;
+    QList<QString> m_fundedBillsList;
 
     QGridLayout *m_buttonGridLayout = nullptr;
 };
