@@ -36,11 +36,11 @@ MainWindow::MainWindow()
     // Create the amount available label and set its location and text
     m_amountAvailableLabel = new QLabel(this);
     m_amountAvailableLabel->setGeometry(0, 0, 150, 20);
-    m_amountAvailableLabel->setText(m_TOTAL_AMOUNT_AVAILABLE_STRING + ":");
+    m_amountAvailableLabel->setText(m_TOTAL_AMOUNT_AVAILABLE_STRING);
 
     // Create the amount available line edit and set its location
     m_amountAvailableEdit = new QLineEdit(this);
-    m_amountAvailableEdit->setGeometry(150, 0, 75, 20);
+    m_amountAvailableEdit->setGeometry(155, 0, 75, 20);
 
     // Create the bill table widget and set its location
     m_billTableWidget = new QTableWidget(this);
@@ -338,7 +338,7 @@ void MainWindow::readConfigAndCreateUI()
             }
         }
 
-        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
         // Create the table widget using the bill map's contents
         createTableWidgetUsingMap();
