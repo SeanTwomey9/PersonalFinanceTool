@@ -217,7 +217,7 @@ void MainWindow::createTableWidgetUsingMap()
 
         // Set the columns appropriately to the Bill's attributes
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
-        m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue())));
+        m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue(), 'f', 2)));
         m_billTableWidget->setCellWidget(row, 2, dateEdit);
         m_billTableWidget->setCellWidget(row, 3, fundedStatusBox);
 
@@ -488,7 +488,7 @@ void MainWindow::openConfigForBillCreation()
     {
         // Write the Bill information out to the config file
         m_settings.beginGroup(removeSpaces(m_billWidget->getNameInput()->text()));
-        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, m_billWidget->getAmountDueInput()->text().toDouble());
+        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, QString::number(m_billWidget->getAmountDueInput()->text().toDouble(), 'f', 2));
         m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(false));
         m_settings.endGroup();
@@ -572,7 +572,7 @@ void MainWindow::saveBillAndDisplayDashboard()
         // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
         m_billWidget->hide();
 
-        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
         // Create the bill table widget using the bill map
         createTableWidgetUsingMap();
@@ -596,7 +596,7 @@ void MainWindow::saveBillAndDisplayDashboard()
         // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
         m_billWidget->hide();
 
-        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
         // Create the bill table widget using the bill map
         createTableWidgetUsingMap();
@@ -646,7 +646,7 @@ void MainWindow::askForTotalAmountAvailable()
             m_settings.beginGroup(m_FUNDS_INFORMATION_GROUP_LABEL);
 
             // Write the total funds available out to the config file
-            m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, m_totalAmountAvailable);
+            m_settings.setValue(m_TOTAL_FUNDS_AVAILABLE_KEY, QString::number(m_totalAmountAvailable, 'f', 2));
             m_settings.endGroup();
             m_settings.sync();
 
@@ -732,7 +732,7 @@ void MainWindow::updateConfigFromUI()
         }
     }
 
-    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
     m_settings.clear();
 
@@ -812,7 +812,7 @@ void MainWindow::deleteBillOnClick()
                 if(fundedStatusBox->currentText() == m_FUNDED_STRING)
                 {
                     m_totalAmountAvailable+= m_billTableWidget->item(row, col-2)->text().toDouble();
-                    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable));
+                    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
                     m_fundedBillsList.removeOne(m_billTableWidget->item(row, col-3)->text());
                 }
 

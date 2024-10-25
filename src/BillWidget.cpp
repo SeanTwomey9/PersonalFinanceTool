@@ -85,32 +85,43 @@ BillWidget::~BillWidget()
 
 void BillWidget::initializeWidget()
 {
+    // Create the bill name label and associated line edit
     m_nameLabel = new QLabel(this);
     m_nameLabel->setText(m_NAME_LABEL_TEXT);
     m_nameInput = new QLineEdit(this);
 
+    // Create the bill amount due label and associated line edit
     m_amountDueLabel = new QLabel(this);
     m_amountDueLabel->setText(m_AMOUNT_DUE_LABEL_TEXT);
     m_amountDueInput = new QLineEdit(this);
 
+    // Create the bill due date and associated date edit
     m_dueDateLabel = new QLabel(this);
     m_dueDateLabel->setText(m_DUE_DATE_LABEL_TEXT);
     m_dueDateInput = new QDateEdit(this);
+
+    // Allow the date edit to display a calendar
     m_dueDateInput->setCalendarPopup(true);
+
+    // Ensure the date edit is initialized to the current date
     m_dueDateInput->setDate(QDate::currentDate());
 
+    // Create the Close button
     m_closeButton = new QPushButton(this);
     m_closeButton->setText(m_CLOSE_BUTTON_TEXT);
 
+    // Create the Enter Another Bill button
     m_enterAnotherButton = new QPushButton(this);
     m_enterAnotherButton->setText(m_ENTER_ANOTHER_BUTTON_TEXT);
 
+    // Create the Done button
     m_doneButton = new QPushButton(this);
     m_doneButton->setText(m_DONE_BUTTON_TEXT);
 }
 
 void BillWidget::createWidgetLayout()
 {
+    // Add the labels, line edits, date edit, and buttons into a grid layout
     m_gridLayout = new QGridLayout(this);
     m_gridLayout->addWidget(m_nameLabel, 0, 0, Qt::AlignmentFlag::AlignLeft);
     m_gridLayout->addWidget(m_nameInput, 0, 1);
@@ -125,30 +136,36 @@ void BillWidget::createWidgetLayout()
 
 QPushButton* BillWidget::getCloseButton()
 {
+    // Return the Close button pointer
     return m_closeButton;
 }
 
 QPushButton* BillWidget::getEnterAnotherButton()
 {
+    // Return the Enter Another Bill button pointer
     return m_enterAnotherButton;
 }
 
 QPushButton* BillWidget::getDoneButton()
 {
+    // Return the Done button pointer
     return m_doneButton;
 }
 
 QLineEdit* BillWidget::getNameInput()
 {
+    // Return the bill name line edit pointer
     return m_nameInput;
 }
 
 QLineEdit* BillWidget::getAmountDueInput()
 {
+    // Return the bill amount due line edit pointer
     return m_amountDueInput;
 }
 
 QDateEdit* BillWidget::getDueDateInput()
 {
+    // Return the bill due date date edit pointer
     return m_dueDateInput;
 }

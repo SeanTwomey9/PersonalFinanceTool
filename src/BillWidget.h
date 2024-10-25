@@ -120,10 +120,11 @@ private:
 
     QGridLayout *m_gridLayout = nullptr; //!< Grid layout used for organizing the labels, line edits, date edit, and push buttons of the BillWidget.
 
+    // Button and button text variables
     QPushButton *m_closeButton = nullptr; //!< Push button used for closing the BillWidget.
     const QString m_CLOSE_BUTTON_TEXT = "Close"; //!< Text used for the Close push button.
     QPushButton *m_enterAnotherButton = nullptr; //!< Push button used for entering another bill.
-    const QString m_ENTER_ANOTHER_BUTTON_TEXT = "Enter another bill"; //!< Text used for the Enter Another button.
+    const QString m_ENTER_ANOTHER_BUTTON_TEXT = "Enter Another Bill"; //!< Text used for the Enter Another button.
     QPushButton *m_doneButton = nullptr; //!< Push button used for closing the BillWidget when finished entering bills.
     const QString m_DONE_BUTTON_TEXT = "Done"; //!< //!< Text used for the Done push button.
 };

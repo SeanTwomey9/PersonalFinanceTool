@@ -158,7 +158,7 @@ private:
     const double m_MAX_AMOUNT_AVAILABLE = static_cast<double>(INT64_MAX); //!< The maximum amount the user can specify for the total amount of money they have available.
     const int m_NUM_DECIMAL_PLACES = 2; //!< The number of decimal places allowed in the total amount available input box.
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.0; //!< The step size for the up and down arrows in the total amount available input box.
-    double m_totalAmountAvailable = 0.0; //!< The total amount of money the user has available, defaulted to zero dollars.
+    double m_totalAmountAvailable = 0.00; //!< The total amount of money the user has available, defaulted to zero dollars.
 
     QSettings m_settings; //!< The QSettings object which reads and writes to the configuration file.
     const QString m_FUNDS_INFORMATION_GROUP_LABEL = "FundsInformation"; //!< The group label for the funds information section of the configuration file.
