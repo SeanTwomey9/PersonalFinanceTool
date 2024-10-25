@@ -17,13 +17,23 @@
 #include <QSettings>
 #include <QTableWidget>
 
-
+/**
+ * @brief The MainWindow class represents the primary window which will display the user's personal financial information.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+
+    /**
+     * @brief Constructs the MainWindow by initializing various UI components and kicking off the initial processing of the user's financial information.
+     */
     MainWindow();
+
+    /**
+     * @brief Destructs the MainWindow by appropriately deleting objects which were dynamically allocated.
+     */
     ~MainWindow();
 
 signals:
@@ -57,14 +67,34 @@ public slots:
      */
     void saveBillAndDisplayDashboard();
 
+    /**
+     * @brief Called when the Save button is pressed. Opens the config file and initially updates the bill map to match the contents of the bill table widget.
+     * Then updates the config file with the contents of the updated bill map.
+     */
     void updateConfigFromUI();
 
+    /**
+     * @brief Clears the BillWidget and then displays it so a user can enter another bill.
+     */
     void showBillWidget();
 
+    /**
+     * @brief Called when the Fund Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
+     * If a row is selected, the bill corresponding to that row will have its funding status set to Funded.
+     */
     void fundBillOnClick();
 
+    /**
+     * @brief Called when the Defund Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
+     * If a row is selected, the bill corresponding to that row will have its funding status set to Not Funded.
+     */
     void defundBillOnClick();
 
+    /**
+     * @brief Called when the Delete Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
+     * If a row is selected, the bill corresponding to that row will have its funding status checked for a value of Funded.
+     * If the bill is funded, the amount of money allocated to that bill is returned to the total amount available, the bill is removed from the funded bills list, and lastly the row is removed from the bill table widget.
+     */
     void deleteBillOnClick();
 
 private:
@@ -87,8 +117,15 @@ private:
      */
     void createInvalidKeyBox();
 
+    /**
+     * @brief Creates a message box in the event that a user attemps to save a bill they entered which is missing a name or an amount due.
+     */
     void createMissingBillDetailsBox();
 
+    /**
+     * @brief Checks if the pre-determined directory for the config file can be generated, if it cannot an error message is displayed to the user. Then checks if the config file exists in that directory, if so the file is parsed.
+     * If the file does not exist in the directory, the welcome sequence initiates in which the user is asked for their financial information.
+     */
     void attemptConfigFileGeneration();
     /**
      * @brief Generates a message box to welcome a first time user.
@@ -128,30 +165,46 @@ private:
      */
     bool fundingStatusStringToBoolean(QString p_fundingStatus);
 
+    /**
+     * @brief Converts a date represented as a string into a date object in the appropriate "M/d/yyyy" format.
+     * @param p_dateString - A date represented as a string.
+     * @return The input string as a date object in "M/d/yyyy" format.
+     */
     QDate convertDateStringToDate(QString p_dateString);
 
+    /**
+     * @brief Removes spaces from an input string containing spaces.
+     * @param p_stringWithSpaces - String with spaces.
+     * @return The original string but with spaces removed.
+     */
     QString removeSpaces(QString p_stringWithSpaces);
 
+    /**
+     * @brief Clears the name, amount due, and due date fields in preparation for allowing a user to enter another bill.
+     */
     void clearBillWidget();
 
+    /**
+     * @brief Organizes various buttons used for interacting with the bill table widget into a layout.
+     */
     void createButtonGridLayout();
 
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
     const QString m_CONFIG_FILE_DIRECTORY = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
-    const QString m_CONFIG_FILE_GENERATE_FAIL_BOX_TITLE = "Failure To Generate Configuration File"; //!< The title of the config file generation failure message box.
+    const QString m_CONFIG_FILE_GENERATE_FAIL_BOX_PRIMARY_TEXT = "Failure To Generate Configuration File"; //!< The title of the config file generation failure message box.
     const QString m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT = "The configuration file could not be generated in " + m_CONFIG_PARENT_FOLDER; //!< The informative text of the config file generation failure message box.
-    const QString m_CONFIG_CORRUPT_FILE_BOX_TITLE = "Configuration File Is Corrupt"; //!< The title of the config file corrupt message box.
+    const QString m_CONFIG_CORRUPT_FILE_BOX_PRIMARY_TEXT = "Configuration File Is Corrupt"; //!< The title of the config file corrupt message box.
     const QString m_CONFIG_CORRUPT_FILE_BOX_INFO_TEXT = "The configuration file could not be opened, a new one will be created following the welcoming sequence."; //!< The informative text of the corrupt config file message box.
     const QString m_WELCOME_BOX_PRIMARY_TEXT = "Welcome to the Personal Finance Tool!"; //!< The welcome message box title.
     const QString m_WELCOME_BOX_INFO_TEXT = "On the subsequent screens, you will be asked to provide some financial information."; //!< The welcome message box informative text.
     const QString m_TOTAL_AMOUNT_AVAILABLE_STRING = "Total Amount Available: $"; //!< The total amount available represented as a string.
     const QString m_ASK_FOR_AMOUNT_AVAILABLE_TEXT = "Please enter the total amount of money available in USD."; //!< The total amount available informative text.
-    const QString m_INVALID_KEY_BOX_TEXT = "Invalid Configuration File Key/Value Pair";
-    const QString m_INVALID_KEY_BOX_INFO_TEXT = "A key/value pair from " + m_CONFIG_FILE_NAME + " is invalid. Please correct the file to have a single value per key and relaunch the application.";
-    const QString m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT = "Missing Bill Information";
-    const QString m_MISSING_BILL_DETAILS_BOX_INFO_TEXT = "Please enter all bill information.";
+    const QString m_INVALID_KEY_BOX_PRIMARY_TEXT = "Invalid Configuration File Key/Value Pair"; //!< The invalid key message box title.
+    const QString m_INVALID_KEY_BOX_INFO_TEXT = "A key/value pair from " + m_CONFIG_FILE_NAME + " is invalid. Please correct the file to have a single value per key and relaunch the application."; //!< The invalid key message box informative text.
+    const QString m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT = "Missing Bill Information"; //!< The missing bill details box title.
+    const QString m_MISSING_BILL_DETAILS_BOX_INFO_TEXT = "Please enter all bill information."; //!< The informative text of the missing bill details message box.
 
     const double m_DEFAULT_AMOUNT_AVAILABLE = 0.0; //!< The default amount of money available assigned if the user does not provide the actual amount.
     const double m_MIN_AMOUNT_AVAILABLE = 0.0; //!< The minimum amount the user can specify for the total amount of money they have available.
@@ -166,35 +219,39 @@ private:
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
     const QString m_BILL_FUNDING_STATUS_KEY = "FundingStatus"; //!< The funding status key which maps to whether or not a bill has been funded.
-    const QString m_BILL_NAME_COLUMN_HEADER_STRING = "Bill Name";
-    const QString m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING = "Amount Due";
-    const QString m_BILL_DUE_DATE_COLUMN_HEADER_STRING = "Due Date";
-    const QString m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING = "Funding Status";
+    const QString m_BILL_NAME_COLUMN_HEADER_STRING = "Bill Name"; //!< The bill name column title.
+    const QString m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING = "Amount Due"; //!< The bill amount due column title.
+    const QString m_BILL_DUE_DATE_COLUMN_HEADER_STRING = "Due Date"; //!< The bill due date column title.
+    const QString m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING = "Funding Status"; //!< The bill funding status column title.
     const QString m_FUNDED_STRING = "Funded"; //!< Funded status of funded represented as a string.
     const QString m_NOT_FUNDED_STRING = "Not Funded"; //!< Funded status of not funded represented as a string.
     const QString m_DATE_STRING_FORMAT = "M/d/yyyy"; //!< The format to use when converting dates to strings.
 
-    const QString m_SAVE_BUTTON_TEXT = "Save"; //!< Save represented as a string.
-    const QString m_DELETE_BUTTON_TEXT = "Delete";
-    const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill";
-    const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill";
-    const QString m_DEFUND_BILL_BUTTON_TEXT = "Defund Bill";
+    const QString m_SAVE_BUTTON_TEXT = "Save"; //!< Save button text.
+    const QString m_DELETE_BUTTON_TEXT = "Delete"; //!< Delete button text.
+    const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill"; //!< Add another bill button text.
+    const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill"; //!< Fund bill button text.
+    const QString m_DEFUND_BILL_BUTTON_TEXT = "Defund Bill"; //!< Defund bill button text.
 
+    // Widgets used throughout the MainWindow
     BillWidget *m_billWidget; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
-    QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
     QTableWidget *m_billTableWidget; //!< Table widget displaying inputted bill information.
 
+    // Amount avaiable UI objects
     QLabel *m_amountAvailableLabel; //!< The label for the total amount available.
     QLineEdit *m_amountAvailableEdit; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
 
+    // Buttons used for manipulating the bill table widget
     QPushButton *m_saveButton = nullptr; //!< Button used to save the current state of the tool to the configuration file for subsequent launches of the application.
-    QPushButton *m_deleteBillButton = nullptr;
-    QPushButton *m_addBillButton = nullptr;
-    QPushButton *m_fundBillButton = nullptr;
-    QPushButton *m_defundBillButton = nullptr;
+    QPushButton *m_deleteBillButton = nullptr; //!< Button used to delete a bill from the bill table widget.
+    QPushButton *m_addBillButton = nullptr; //!< Button used to add another bill to the bill table widget.
+    QPushButton *m_fundBillButton = nullptr; //!< Button used to fund a bill in the bill table widget.
+    QPushButton *m_defundBillButton = nullptr; //!< Button used to defund a bill in the bill table widget.
 
-    QList<QString> m_fundedBillsList;
+    // Data structures used for storing bill information
+    QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
+    QList<QString> m_fundedBillsList; //!< List which holds the currently funded bills.
 
-    QGridLayout *m_buttonGridLayout = nullptr;
+    QGridLayout *m_buttonGridLayout = nullptr; //!< Grid layout used to organize buttons on the MainWindow.
 };
 #endif // MAINWINDOW_H

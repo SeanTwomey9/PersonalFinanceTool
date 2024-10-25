@@ -2,12 +2,9 @@
 #   File name:          PersonalFinanceTool.pro
 #   Created on:         08/30/2024
 #   Author:             stwomey
-#
 #   Description:        Project file for the PersonalFinanceTool
-#
 #   Change History:     See https://github.com/SeanTwomey9/PersonalFinanceTool
 #   Relative Location:  PersonalFinanceTool/
-#
 ###################################################################################
 
 QT += core
@@ -27,6 +24,7 @@ TARGET = PersonalFinanceTool
 # The directory where the binary is generated
 DESTDIR = ./bin
 
+# Store unnecessary files in hidden folders
 OBJECTS_DIR = ./obj
 MOC_DIR = ./moc
 UI_DIR = ./ui
@@ -42,6 +40,7 @@ HEADERS += \
     src/BillWidget.h \
     src/MainWindow.h
 
+#Track the config file and README in the IDE
 OTHER_FILES += \
     config/*.ini
 

@@ -35,6 +35,9 @@ void deleteLineEditIfNonNull(QLineEdit *p_lineEdit);
  */
 void deleteButtonIfNonNull(QPushButton *p_button);
 
+/**
+ * @brief The BillWidget class represents a pop-up widget which allows the user to enter a bill that they wish to track.
+ */
 class BillWidget : public QWidget
 {
     Q_OBJECT
