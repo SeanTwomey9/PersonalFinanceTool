@@ -65,6 +65,8 @@ public slots:
 
     void defundBillOnClick();
 
+    void deleteBillOnClick();
+
 private:
 
     /**
