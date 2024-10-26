@@ -23,5 +23,4 @@ moc_*
 .qmake.stash
 .qtc*
 build/
-*.app
 config/*
