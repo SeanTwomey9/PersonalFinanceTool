@@ -42,7 +42,8 @@ HEADERS += \
 
 #Track the config file and README in the IDE
 OTHER_FILES += \
-    config/*.ini
+    config/PersonalFinanceTool.ini \
+    README.md
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
