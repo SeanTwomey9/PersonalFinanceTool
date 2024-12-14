@@ -85,10 +85,6 @@ Following the total amount available request, the user will be prompted to enter
 
 ![Bill Entry](/images/bill_entry.png)
 
-If the user does not enter a name for the bill and/or the amount due, they will receive an error message indicating there's missing bill information.
-
-![Missing Bill Information](/images/missing_bill_information.png)
-
 While entering bills, the user can click the *Close* button to terminate the application, the *Enter Another Bill* button to save the currently entered bill and reopen the bill widget for entry of another bill, and the *Done* button to save the currently entered bill and display the bill table widget.
 
 ### Configuration File
@@ -124,3 +120,15 @@ After the user is finished entering their bills, the bill table widget will be d
 ![Managing Bills](/images/bill_table_widget.png)
 
 The bill table widget can be used like a standard table, each cell can be edited via either entering text or interacting with a dropdown depending on the specific cell. The user can also select multiple rows in the widget and make use of the convenience buttons in the top right corner. When the user is finished making changes to their bill information, they can click the *Save* button which will update the total amount available (if they chose to fund or defund any bills) and write the updated information out to the configuration file.
+
+## Common Errors
+
+1. If the user does not enter a name for the bill and/or the amount due, they will receive an error message indicating there's missing bill information.
+
+![Missing Bill Information](/images/missing_bill_information.png)
+
+This can be resolved by ensuring that each bill is added with an appropriate name, amount due, and due date.
+
+2. ```make: *** No rule to make target `PersonalFinanceTool'.  Stop.```
+
+  This can occur if the Software Development Kit (SDK) or a different element of the development environment has changed since the previous build of the application. This can be resolved by removing the *.qmake.stash* file from the application folder.

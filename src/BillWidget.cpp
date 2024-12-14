@@ -47,7 +47,7 @@ BillWidget::BillWidget(QObject *p_parent)
     // Set the title of the BillWidget
     this->setWindowTitle(m_WINDOW_TITLE);
 
-    // Needed to make the widget appear without clicking the application icon
+    // Blocks input to other windows while open, needed to make the widget appear without clicking the application icon
     this->setWindowModality(Qt::ApplicationModal);
 
     // Create the labels, line edits, date edit, and push button objects
@@ -80,7 +80,6 @@ BillWidget::~BillWidget()
         delete m_dueDateInput;
         m_dueDateInput = nullptr;
     }
-
 }
 
 void BillWidget::initializeWidget()

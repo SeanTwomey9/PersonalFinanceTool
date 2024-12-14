@@ -2,7 +2,7 @@
 #   File name:          Bill.h
 #   Created on:         08/30/2024
 #   Author:             stwomey
-#   Description:        Header file for a Bill
+#   Description:        Header file for a Bill object
 #   Change History:     See https://github.com/SeanTwomey9/PersonalFinanceTool
 #   Relative Location:  PersonalFinanceTool/src/
 ##################################################################################*/
@@ -31,7 +31,7 @@ public:
     ~Bill() {};
 
     /**
-     * @brief Allows for the comparison of Bill objects for equality
+     * @brief Allows for the comparison of Bill objects for equality.
      * @param p_firstBill - The first Bill object to compare.
      * @param p_secondBill - The second Bill object to compare.
      * @return True if the Bill objects are equal based on their name, amount due, due date, and funded status. False otherwise.
@@ -40,31 +40,31 @@ public:
 
     /**
      * @brief Returns the bill's name.
-     * @return m_name - Represents the name of the bill.
+     * @return The name of the bill.
      */
     QString getName();
 
     /**
      * @brief Returns the bill's amount due.
-     * @return m_amountDueDollars - Represents the amount of money due for the bill.
+     * @return The amount of money due for the bill.
      */
     double getAmountDue();
 
     /**
      * @brief Returns the bill's due date.
-     * @return m_dueData - Represents the due date of the bill.
+     * @return The due date of the bill.
      */
     QDate getDueDate();
 
     /**
      * @brief Returns the funded status of the bill.
-     * @return m_isFunded - Represents whether or not the bill has been funded.
+     * @return Whether or not the bill has been funded.
      */
     bool isFunded();
 
     /**
      * @brief Updates the bill's name.
-     * @param p_updatedName  Updated bill name.
+     * @param The bill name.
      */
     void setName(QString p_updatedName);
 

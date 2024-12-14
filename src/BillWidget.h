@@ -103,8 +103,9 @@ public:
 
 private:
 
-
+    // General UI variables
     const QString m_WINDOW_TITLE = "Bill Entry"; //!< Title of the BillWidget window.
+    QGridLayout *m_gridLayout = nullptr; //!< Grid layout used for organizing the labels, line edits, date edit, and push buttons of the BillWidget.
 
     // Name input fields
     QLabel *m_nameLabel = nullptr; //!< Label for the line edit used for entering the name of the bill.
@@ -117,14 +118,12 @@ private:
     QLineEdit *m_amountDueInput = nullptr; //!< The line edit used for entering the amount due of the bill.
 
     // Due date input fields
-    QLabel *m_dueDateLabel; //!< Label for the date edit used for entering the due date of the bill.
+    QLabel *m_dueDateLabel = nullptr; //!< Label for the date edit used for entering the due date of the bill.
     const QString m_DUE_DATE_LABEL_TEXT = "Due Date:"; //!< Text for the label for the date edit used for entering the due date of the bill.
     QDateEdit *m_dueDateInput = nullptr; //!< The date edit used for entering the due date of the bill.
 
-    QGridLayout *m_gridLayout = nullptr; //!< Grid layout used for organizing the labels, line edits, date edit, and push buttons of the BillWidget.
-
     // Button and button text variables
-    QPushButton *m_closeButton = nullptr; //!< Push button used for closing the BillWidget.
+    QPushButton *m_closeButton = nullptr; //!< Push button used for closing the BillWidget and subsequently exiting the application.
     const QString m_CLOSE_BUTTON_TEXT = "Close"; //!< Text used for the Close push button.
     QPushButton *m_enterAnotherButton = nullptr; //!< Push button used for entering another bill.
     const QString m_ENTER_ANOTHER_BUTTON_TEXT = "Enter Another Bill"; //!< Text used for the Enter Another button.

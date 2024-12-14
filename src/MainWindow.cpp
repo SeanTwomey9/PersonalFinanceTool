@@ -19,9 +19,6 @@
 
 MainWindow::MainWindow()
 {
-    // Connection to terminate application when certain conditions are met
-    connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
-
     // Set the title of the MainWindow
     this->setWindowTitle(m_APP_NAME);
 
@@ -31,6 +28,9 @@ MainWindow::MainWindow()
     // Create the BillWidget
     m_billWidget = new BillWidget(this);
 
+    // Connection to terminate application when certain conditions are met
+    connect(this, SIGNAL(conditionToTerminateMet()), this, SLOT(terminateApplication()), Qt::QueuedConnection);
+
     // When the BillWidget's Close button is clicked, terminate the application
     connect(m_billWidget->getCloseButton(), SIGNAL(clicked()), this, SLOT(terminateApplication()), Qt::AutoConnection);
 
@@ -38,7 +38,7 @@ MainWindow::MainWindow()
     connect(m_billWidget->getEnterAnotherButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayBillWidget()), Qt::AutoConnection);
 
     // When the BillWidget's Done button is clicked, save the currently entered bill information to the config file and display the bill table widget
-    connect(m_billWidget->getDoneButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayDashboard()), Qt::AutoConnection);
+    connect(m_billWidget->getDoneButton(), SIGNAL(clicked()), this, SLOT(saveBillAndDisplayBillTableWidget()), Qt::AutoConnection);
 
     // Create the amount available label and set its location and text
     m_amountAvailableLabel = new QLabel(this);
@@ -64,7 +64,7 @@ MainWindow::MainWindow()
     m_addBillButton = new QPushButton(this);
     m_addBillButton->setText(m_ADD_BILL_BUTTON_TEXT);
 
-    // When the Add Another Bill button is clicked, clear the bill widget and display it for entry of another bill
+    // When the Add Another Bill button is clicked, clear the BillWidget and display it for entry of another bill
     connect(m_addBillButton, SIGNAL(clicked()), this, SLOT(showBillWidget()), Qt::AutoConnection);
 
     // Create the Delete button
@@ -97,7 +97,7 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-    // If the bill widget has been created successfully
+    // If the BillWidget has been created successfully
     if(m_billWidget != nullptr)
     {
         // Delete it and set it to be null
@@ -111,7 +111,7 @@ MainWindow::~MainWindow()
     // Properly delete the amount available line edit
     deleteLineEditIfNonNull(m_amountAvailableEdit);
 
-    // Properly delete the save button
+    // Properly delete the all buttons
     deleteButtonIfNonNull(m_saveButton);
     deleteButtonIfNonNull(m_addBillButton);
     deleteButtonIfNonNull(m_deleteBillButton);
@@ -148,63 +148,6 @@ void MainWindow::terminateApplication()
 {
     // Terminate the application
     QCoreApplication::quit();
-}
-
-void MainWindow::createConfigFileGenerateFailureBox()
-{
-    // Create a message box with appropriate displayed text
-    QMessageBox configFileFailBox;
-    configFileFailBox.setText(m_CONFIG_FILE_GENERATE_FAIL_BOX_PRIMARY_TEXT);
-    configFileFailBox.setInformativeText(m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT);
-    configFileFailBox.setStandardButtons(QMessageBox::Ok);
-
-    int configFileFailBoxSelection = configFileFailBox.exec();
-
-    switch(configFileFailBoxSelection)
-    {
-    // If the user presses "Ok", terminate the application
-    case QMessageBox::Button::Ok :
-    {
-        emit conditionToTerminateMet();
-        break;
-    }
-
-    default :
-    {
-        // Terminate the application by default
-        emit conditionToTerminateMet();
-        break;
-    }
-    }
-}
-
-void MainWindow::createInvalidKeyBox()
-{
-    // Create the invalid key message box
-    QMessageBox invalidKeyBox;
-    invalidKeyBox.setText(m_INVALID_KEY_BOX_PRIMARY_TEXT);
-    invalidKeyBox.setInformativeText(m_INVALID_KEY_BOX_INFO_TEXT);
-    invalidKeyBox.setStandardButtons(QMessageBox::Ok);
-
-    int invalidKeyBoxSelection = invalidKeyBox.exec();
-
-    switch(invalidKeyBoxSelection)
-    {
-    // If the user presses the "Ok" button
-    case QMessageBox::Button::Ok :
-    {
-        // Terminate the application
-        emit conditionToTerminateMet();
-        break;
-    }
-
-    default :
-    {
-        // Terminate the application in the default case
-        emit conditionToTerminateMet();
-        break;
-    }
-    }
 }
 
 void MainWindow::createTableWidgetUsingMap()
@@ -293,7 +236,7 @@ void MainWindow::readConfigAndCreateUI()
                 // TODO: Pass the invalid key to the box to display to the user
                 // TODO: The box appears once for each incorrect pair, should the app just terminate after a single incorrect pair is found?
                 // Alert the user with an invalid key message box
-                createInvalidKeyBox();
+                createFatalErrorBox(m_INVALID_KEY_BOX_PRIMARY_TEXT, m_INVALID_KEY_BOX_INFO_TEXT);
             }
 
             else
@@ -386,7 +329,7 @@ void MainWindow::attemptConfigFileGeneration()
     if(!configParentFolder.mkpath(m_CONFIG_PARENT_FOLDER))
     {
         // Display a message box to alert the user
-        createConfigFileGenerateFailureBox();
+        createFatalErrorBox(m_CONFIG_FILE_GENERATE_FAIL_BOX_PRIMARY_TEXT, m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT);
     }
 
     // The config file was found in the expected path
@@ -440,6 +383,35 @@ void MainWindow::welcomeFirstTimeUser()
         // Break in the default case
         default:
         {
+            break;
+        }
+    }
+}
+
+void MainWindow::createFatalErrorBox(const QString p_primaryText, const QString p_infoText)
+{
+    // Create the fatal error message box
+    QMessageBox fatalErrorBox;
+    fatalErrorBox.setText(p_primaryText);
+    fatalErrorBox.setInformativeText(p_infoText);
+    fatalErrorBox.setStandardButtons(QMessageBox::Ok);
+
+    int fatalErrorBoxSelection = fatalErrorBox.exec();
+
+    switch(fatalErrorBoxSelection)
+    {
+        // If the user presses the "Ok" button
+        case QMessageBox::Button::Ok :
+        {
+            // Terminate the application
+            emit conditionToTerminateMet();
+            break;
+        }
+
+        default :
+        {
+            // Terminate the application in the default case
+            emit conditionToTerminateMet();
             break;
         }
     }
@@ -561,13 +533,13 @@ void MainWindow::createMissingBillDetailsBox()
             // If the user selected Ok
             case QMessageBox::Ok :
             {
-                // Have the user return to the bill widget to enter the missing bill name
+                // Have the user return to the BillWidget to enter the missing bill name
                 break;
             }
 
             default:
             {
-                // Default to have the user return to the bill widget to enter the missing bill name
+                // Default to have the user return to the BillWidget to enter the missing bill name
                 break;
             }
         }
@@ -602,7 +574,7 @@ void MainWindow::clearBillWidget()
     m_billWidget->getDueDateInput()->setDate(QDate::currentDate());
 }
 
-void MainWindow::saveBillAndDisplayDashboard()
+void MainWindow::saveBillAndDisplayBillTableWidget()
 {
     // If the user pressed the Done button but did not enter a name or amount due for the bill, do not attempt to finish creating this bill
     if(m_billWidget->getNameInput()->text().isEmpty() && m_billWidget->getAmountDueInput()->text().isEmpty())
@@ -648,10 +620,10 @@ void MainWindow::saveBillAndDisplayDashboard()
 }
 void MainWindow::showBillWidget()
 {
-    // Make sure to clear the bill widget from the previous entry if the user chooses to add another bill from the dashboard
+    // Make sure to clear the BillWidget from the previous entry if the user chooses to add another bill from the dashboard
     clearBillWidget();
 
-    // Display the bill widget so the user can add another bill
+    // Display the BillWidget so the user can add another bill
     m_billWidget->show();
 }
 
