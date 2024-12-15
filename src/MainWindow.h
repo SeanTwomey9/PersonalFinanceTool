@@ -115,7 +115,6 @@ private:
      */
     void createFatalErrorBox(const QString p_primaryText, const QString p_infoText);
 
-
     /**
      * @brief Creates a message box in the event that a user attempts to save a bill they entered which is missing a name or an amount due.
      */
@@ -188,6 +187,26 @@ private:
      * @brief Organizes various buttons used for interacting with the bill table widget into a layout.
      */
     void createButtonGridLayout();
+
+    /**
+     * @brief Parses group labels, keys, and values in the config file in order to update the bill map and funded bills list before bill table widget is shown.
+     * @param p_groupLabel - Group label being checked in config file, will be either FundsInformation group or a bill name.
+     * @param p_key - Key being checked in config file, whill be either the amount due, due date, or funding status.
+     * @param p_value - Value being checked in config file, will be the information the user entered for the specific bill.
+     */
+    void parseConfigContents(QString p_groupLabel, QString p_key, QString p_value);
+
+    /**
+     * @brief Hides the BillWidget before displaying the bill table widget using the updated contents of the bill map.
+     */
+    void displayBillTableWidget();
+
+    /**
+     * @brief If a row in the bill table widget is selected, set the associated Bill's funding status to either funded or not funded.
+     * @param p_widgetRow - The row of the bill table widget being checked for selection.
+     * @param p_isFunded - The Bill's funded status, 1 for funded and 0 for not funded.
+     */
+    void switchFundingStatusIfSelected(int p_widgetRow, int p_isFunded);
 
     // Window variables
     const QString m_APP_NAME = "PersonalFinanceTool"; //!< The name of the application displayed as the window title.

@@ -13,8 +13,12 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    //w.show();
-    return a.exec();
+    // Create the application object
+    QApplication application(argc, argv);
+
+    // Create the main window object
+    MainWindow window;
+
+    // Start the main application thread
+    return application.exec();
 }

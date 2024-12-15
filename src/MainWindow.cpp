@@ -121,6 +121,9 @@ MainWindow::~MainWindow()
     // If the bill table widget has been created successfully
     if(m_billTableWidget != nullptr)
     {
+        // Clear the widget so widget pointers within are deleted
+        m_billTableWidget->clear();
+
         // Delete it and set it to be null
         delete m_billTableWidget;
         m_billTableWidget = nullptr;
@@ -167,6 +170,7 @@ void MainWindow::createTableWidgetUsingMap()
     // Create an iterator to iterate over the bill map
     QMap<QString, Bill>::iterator billMapIterator;
 
+
     for(billMapIterator = m_billMap.begin(); billMapIterator != m_billMap.end(); ++billMapIterator)
     {
         // Retrieve the current Bill being checked
@@ -181,6 +185,7 @@ void MainWindow::createTableWidgetUsingMap()
         // Set the date edit based on the bill's due date
         dateEdit->setDate(currentBill.getDueDate());
 
+        // Create a combo box to hold the funding status of the bill
         QComboBox *fundedStatusBox = new QComboBox(this);
         fundedStatusBox->addItem(m_NOT_FUNDED_STRING);
         fundedStatusBox->addItem(m_FUNDED_STRING);
@@ -200,7 +205,73 @@ void MainWindow::createTableWidgetUsingMap()
 QDate MainWindow::convertDateStringToDate(QString p_dateString)
 {
     // Convert the due date string into a date object and return it
-    return QDate::fromString(removeSpaces(p_dateString),"M/d/yyyy");
+    return QDate::fromString(removeSpaces(p_dateString), m_DATE_STRING_FORMAT);
+}
+
+void MainWindow::parseConfigContents(QString p_groupLabel, QString p_key, QString p_value)
+{
+    // If the group label is the funds information section
+    if(p_groupLabel == m_FUNDS_INFORMATION_GROUP_LABEL)
+    {
+        // If there is no total amount of money available currently stored in the config file
+        if(p_value.isEmpty())
+        {
+            // Default the amount available to zero
+            m_totalAmountAvailable = 0.00;
+        }
+
+        // If an amount available was found
+        else
+        {
+            // Update the amount available to the config file's contents
+            m_totalAmountAvailable = p_value.toDouble();
+        }
+    }
+
+    // If the group label is a bill
+    else
+    {
+        // If the bill being checked has not been inserted into the bill map yet
+        if(!m_billMap.contains(p_groupLabel))
+        {
+            // Create a new Bill object
+            Bill readBill;
+
+            // Set the Bill's name
+            readBill.setName(p_groupLabel);
+
+            // Since the amount due will be read before the due date and the funding status, set the amount due of the Bill
+            readBill.setAmountDue(p_value.toDouble());
+
+            // Insert the Bill into the map mapped to the name of the bill
+            m_billMap[p_groupLabel] = readBill;
+        }
+
+        // If the bill being checked already exists in the bill map, then we're checking its due date
+        else
+        {
+            // If the key label is the due date key
+            if(p_key == m_BILL_DUE_DATE_KEY)
+            {
+                // Set the appropriate Bill's due date from the bill map by converting the date string to a date object
+                m_billMap[p_groupLabel].setDueDate(convertDateStringToDate(p_value));
+            }
+
+            // Otherwise, the key label is the funding status
+            else
+            {
+                // Set the appropriate Bill's funding status in the bill map by converting the funding status string to a boolean
+                m_billMap[p_groupLabel].setFundedStatus(fundingStatusStringToBoolean(p_value));
+
+                // If the Bill is currently funded
+                if(m_billMap[p_groupLabel].isFunded())
+                {
+                    // Add the Bill's name to the funded list to assist with updating the total amount available
+                    m_fundedBillsList.append(m_billMap[p_groupLabel].getName());
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::readConfigAndCreateUI()
@@ -224,9 +295,6 @@ void MainWindow::readConfigAndCreateUI()
         // Iterate over each key
         foreach(QString key, configFileKeys)
         {
-            // The keys are stored in "Group label/key" format so they need to be separated
-            QStringList keyValues = m_settings.value(key).toStringList();
-
             // Split the keys at the "/" to isolate the current group label and key
             QStringList splitKeys = key.split(QLatin1Char('/'));
 
@@ -244,68 +312,12 @@ void MainWindow::readConfigAndCreateUI()
                 // Save both the group label, key, and value
                 QString groupLabel = splitKeys.at(0);
                 QString keyLabel = splitKeys.at(1);
-                QString value = keyValues.at(0);
 
-                // If the group label is the funds information section
-                if(groupLabel == m_FUNDS_INFORMATION_GROUP_LABEL)
-                {
-                    // If their is no total amount of money available currently stored in the config file
-                    if(value.isEmpty())
-                    {
-                        // Default the amount available to zero
-                        m_totalAmountAvailable = 0.00;
-                    }
+                // The keys are stored in "Group label/key" format so they need to be separated
+                QString keyValue = m_settings.value(key).toString();
 
-                    // If an amount available was found
-                    else
-                    {
-                        // Update the amount available to the config file's contents
-                        m_totalAmountAvailable = value.toDouble();
-                    }
-                }
-
-                // If the group label is a bill
-                else
-                {
-                    // If the bill being checked has not been inserted into the bill map yet
-                    if(!m_billMap.contains(groupLabel))
-                    {
-                        // Create a new Bill object
-                        Bill readBill;
-
-                        // Set the Bill's name
-                        readBill.setName(groupLabel);
-
-                        // Since the amount due will be read before the due date and the funding status, set the amount due of the Bill
-                        readBill.setAmountDue(value.toDouble());
-
-                        // Insert the Bill into the map mapped to the name of the bill
-                        m_billMap[groupLabel] = readBill;
-                    }
-
-                    // If the bill being checked already exists in the bill map, then we're checking its due date
-                    else
-                    {
-                        // If the key label is the due date key
-                        if(keyLabel == m_BILL_DUE_DATE_KEY)
-                        {
-                            // Set the appropriate Bill's due date from the bill map by converting the date string to a date object
-                            m_billMap[groupLabel].setDueDate(convertDateStringToDate(value));
-                        }
-
-                        // Otherwise, the key label is the funding status
-                        else
-                        {
-                            // Set the appropriate Bill's funding status in the bill map by converting the funding status string to a boolean
-                            m_billMap[groupLabel].setFundedStatus(fundingStatusStringToBoolean(value));
-
-                            if(m_billMap[groupLabel].isFunded())
-                            {
-                                m_fundedBillsList.append(m_billMap[groupLabel].getName());
-                            }
-                        }
-                    }
-                }
+                // Use group labels, keys, and values from config file to update the bill map and funded bills list
+                parseConfigContents(groupLabel, keyLabel, keyValue);
             }
         }
 
@@ -348,10 +360,9 @@ void MainWindow::attemptConfigFileGeneration()
     }
 }
 
-
 void MainWindow::welcomeFirstTimeUser()
 {
-    // Create a welcome message box with appropriate title and title
+    // Create a welcome message box with appropriate primary and informative text
     QMessageBox welcomeBox;
     welcomeBox.setText(m_WELCOME_BOX_PRIMARY_TEXT);
     welcomeBox.setInformativeText(m_WELCOME_BOX_INFO_TEXT);
@@ -364,27 +375,27 @@ void MainWindow::welcomeFirstTimeUser()
 
     switch(welcomeBoxSelection)
     {
-        // If the user selects "Ok"
-        case QMessageBox::Ok :
-        {
-            // Ask for total funds available
-            askForTotalAmountAvailable();
-            break;
-        }
+    // If the user selects "Ok"
+    case QMessageBox::Ok :
+    {
+        // Ask for total funds available
+        askForTotalAmountAvailable();
+        break;
+    }
 
         // If the user selects "Close"
-        case QMessageBox::Close :
-        {
-            // Exit application
-            emit conditionToTerminateMet();
-            break;
-        }
+    case QMessageBox::Close :
+    {
+        // Exit application
+        emit conditionToTerminateMet();
+        break;
+    }
 
         // Break in the default case
-        default:
-        {
-            break;
-        }
+    default:
+    {
+        break;
+    }
     }
 }
 
@@ -400,20 +411,20 @@ void MainWindow::createFatalErrorBox(const QString p_primaryText, const QString 
 
     switch(fatalErrorBoxSelection)
     {
-        // If the user presses the "Ok" button
-        case QMessageBox::Button::Ok :
-        {
-            // Terminate the application
-            emit conditionToTerminateMet();
-            break;
-        }
+    // If the user presses the "Ok" button
+    case QMessageBox::Button::Ok :
+    {
+        // Terminate the application
+        emit conditionToTerminateMet();
+        break;
+    }
 
-        default :
-        {
-            // Terminate the application in the default case
-            emit conditionToTerminateMet();
-            break;
-        }
+    default :
+    {
+        // Terminate the application in the default case
+        emit conditionToTerminateMet();
+        break;
+    }
     }
 }
 
@@ -432,28 +443,28 @@ void MainWindow::createCorruptConfigFileBox()
 
     switch(corruptBoxSelection)
     {
-        // If the user selected Ok
-        case QMessageBox::Ok :
-        {
-            // Kick off the welcome sequence to have the user re-enter their financial information to get back to a functional state
-            welcomeFirstTimeUser();
-            break;
-        }
+    // If the user selected "Ok"
+    case QMessageBox::Ok :
+    {
+        // Kick off the welcome sequence to have the user re-enter their financial information to get back to a functional state
+        welcomeFirstTimeUser();
+        break;
+    }
 
-            // If the user selected Close
-        case QMessageBox::Close :
-        {
-            // Terminate the application
-            emit conditionToTerminateMet();
-            break;
-        }
+        // If the user selected "Close"
+    case QMessageBox::Close :
+    {
+        // Terminate the application
+        emit conditionToTerminateMet();
+        break;
+    }
 
-        default:
-        {
-            // Default to have the user re-enter their information
-            welcomeFirstTimeUser();
-            break;
-        }
+    default:
+    {
+        // Default to have the user re-enter their information
+        welcomeFirstTimeUser();
+        break;
+    }
     }
 }
 
@@ -493,56 +504,67 @@ void MainWindow::openConfigForBillCreation()
     // Otherwise if the config file was opened successfully
     else
     {
-        // Write the Bill information out to the config file
-        m_settings.beginGroup(removeSpaces(m_billWidget->getNameInput()->text()));
-        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, QString::number(m_billWidget->getAmountDueInput()->text().toDouble(), 'f', 2));
-        m_settings.setValue(m_BILL_DUE_DATE_KEY, m_billWidget->getDueDateInput()->date().toString(m_DATE_STRING_FORMAT));
+        // Save the entered Bill's name, amount due, and due date from the BillWidget
+        QString enteredBillName = m_billWidget->getNameInput()->text();
+        double enteredBillAmountDue = m_billWidget->getAmountDueInput()->text().toDouble();
+        QDate enteredBillDueDate = m_billWidget->getDueDateInput()->date();
+
+        // Write the Bill's name with spaces removed to the config file
+        m_settings.beginGroup(removeSpaces(enteredBillName));
+
+        // Write the amount due to the config file in decimal format
+        m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, QString::number(enteredBillAmountDue, 'f', 2));
+
+        // Write the Bill's due date to the config file in M/d/yyyy format
+        m_settings.setValue(m_BILL_DUE_DATE_KEY, enteredBillDueDate.toString(m_DATE_STRING_FORMAT));
+
+        // Write the Bill's funding status to the config file, defaulted to not funded
         m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(false));
         m_settings.endGroup();
         m_settings.sync();
 
         // Create a new Bill object for the bill information inputted into the BillWidget
         Bill enteredBill;
-        enteredBill.setName(m_billWidget->getNameInput()->text());
-        enteredBill.setAmountDue(m_billWidget->getAmountDueInput()->text().toDouble());
-        enteredBill.setDueDate(m_billWidget->getDueDateInput()->date());
+        enteredBill.setName(enteredBillName);
+        enteredBill.setAmountDue(enteredBillAmountDue);
+        enteredBill.setDueDate(enteredBillDueDate);
 
         // Default the bill to not having been funded yet
         enteredBill.setFundedStatus(false);
 
         // Insert the Bill object into the map with a key of the name of the bill with spaces removed
-        m_billMap[removeSpaces(m_billWidget->getNameInput()->text())] = enteredBill;
+        m_billMap[removeSpaces(enteredBillName)] = enteredBill;
     }
 }
 
 void MainWindow::createMissingBillDetailsBox()
 {
-        // Create the missing bill name QMessageBox with appropriate displayed text
-        QMessageBox missingBillDetailsBox;
-        missingBillDetailsBox.setText(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT);
-        missingBillDetailsBox.setInformativeText(m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
+    // Create the missing bill name QMessageBox with appropriate displayed text
+    QMessageBox missingBillDetailsBox;
+    missingBillDetailsBox.setText(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT);
+    missingBillDetailsBox.setInformativeText(m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
 
-        // Give the user the options of "Ok'ing" the error
-        missingBillDetailsBox.setStandardButtons(QMessageBox::Ok);
+    // Give the user the options of "Ok'ing" the error
+    missingBillDetailsBox.setStandardButtons(QMessageBox::Ok);
 
-        // Store the user's selection
-        int missingBillDetailsBoxSelection = missingBillDetailsBox.exec();
+    // Store the user's selection
+    int missingBillDetailsBoxSelection = missingBillDetailsBox.exec();
 
-        switch(missingBillDetailsBoxSelection)
-        {
-            // If the user selected Ok
-            case QMessageBox::Ok :
-            {
-                // Have the user return to the BillWidget to enter the missing bill name
-                break;
-            }
+    switch(missingBillDetailsBoxSelection)
+    {
+    // If the user selected Ok
+    case QMessageBox::Ok :
+    {
+        // Have the user return to the BillWidget to enter the missing bill name
+        break;
+    }
 
-            default:
-            {
-                // Default to have the user return to the BillWidget to enter the missing bill name
-                break;
-            }
-        }
+    default:
+    {
+        // Default to have the user return to the BillWidget to enter the missing bill name
+        break;
+    }
+    }
 }
 
 void MainWindow::saveBillAndDisplayBillWidget()
@@ -574,22 +596,28 @@ void MainWindow::clearBillWidget()
     m_billWidget->getDueDateInput()->setDate(QDate::currentDate());
 }
 
+void MainWindow::displayBillTableWidget()
+{
+    // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
+    m_billWidget->hide();
+
+    // Set the amount available as appropriate
+    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
+
+    // Create the bill table widget using the bill map
+    createTableWidgetUsingMap();
+
+    // Show the window
+    this->show();
+}
+
 void MainWindow::saveBillAndDisplayBillTableWidget()
 {
-    // If the user pressed the Done button but did not enter a name or amount due for the bill, do not attempt to finish creating this bill
+    // If the user pressed the Done button but did not enter a name and amount due for the bill, do not attempt to finish creating this bill
     if(m_billWidget->getNameInput()->text().isEmpty() && m_billWidget->getAmountDueInput()->text().isEmpty())
     {
-        // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
-        m_billWidget->hide();
-
-        // Set the amount available as appropriate
-        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
-
-        // Create the bill table widget using the bill map
-        createTableWidgetUsingMap();
-
-        // Show the window
-        this->show();
+        // Display the bill table widget
+        displayBillTableWidget();
     }
 
     // If one of either the bill name or bill amount due fields are empty but the other has content in it
@@ -605,22 +633,14 @@ void MainWindow::saveBillAndDisplayBillTableWidget()
         // Attempt to open the config file, if successful create a new Bill object and store contents in the config file
         openConfigForBillCreation();
 
-        // Hide the BillWidget as no more bills need to be entered since the Done button was pressed
-        m_billWidget->hide();
-
-        // Set the amount available as appropriate
-        m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
-
-        // Create the bill table widget using the bill map
-        createTableWidgetUsingMap();
-
-        // Show the window
-        this->show();
+        // After capturing the last entered Bill, display the bill table widget
+        displayBillTableWidget();
     }
 }
+
 void MainWindow::showBillWidget()
 {
-    // Make sure to clear the BillWidget from the previous entry if the user chooses to add another bill from the dashboard
+    // Make sure to clear the BillWidget from the previous entry if the user chooses to add another bill from the bill table widget
     clearBillWidget();
 
     // Display the BillWidget so the user can add another bill
@@ -816,28 +836,27 @@ void MainWindow::updateConfigFromUI()
     m_settings.sync();
 }
 
+void MainWindow::switchFundingStatusIfSelected(int p_widgetRow, int p_isFunded)
+{
+    // If the current row being checked has been selected by the user
+    if(m_billTableWidget->item(p_widgetRow, 0)->isSelected())
+    {
+        // Retrieve the funding status combo box found in the third column
+        QComboBox *fundedStatusBox;
+        fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(p_widgetRow, 3);
+
+        // Switch the funding status to either funded or not funded
+        fundedStatusBox->setCurrentIndex(p_isFunded);
+    }
+}
+
 void MainWindow::fundBillOnClick()
 {
     // Iterate over the bill table widget rows
     for(int row = 0; row < m_billTableWidget->rowCount(); row++)
     {
-        // Iterate over the columns in each row
-        for(int col = 0; col < m_billTableWidget->columnCount(); col++)
-        {
-            // Store the column header
-            QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
-
-            // If the current column is the bill's funding status and the row is selected
-            if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING && m_billTableWidget->item(row, 0)->isSelected())
-            {
-                // Retrieve the funding status combo box
-                QComboBox *fundedStatusBox;
-                fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
-
-                // Switch the funding status to funded
-                fundedStatusBox->setCurrentIndex(1);
-            }
-        }
+        // If a row is selected, set the Bill's funding status to funded
+        switchFundingStatusIfSelected(row, 1);
     }
 }
 
@@ -846,23 +865,8 @@ void MainWindow::defundBillOnClick()
     // Iterate over the bill table widget rows
     for(int row = 0; row < m_billTableWidget->rowCount(); row++)
     {
-        // Iterate over the columns in each row
-        for(int col = 0; col < m_billTableWidget->columnCount(); col++)
-        {
-            // Store the column header
-            QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
-
-            // If the current column is the bill's funding status and the row is selected
-            if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING && m_billTableWidget->item(row, 0)->isSelected())
-            {
-                // Retrieve the funding status combo box
-                QComboBox *fundedStatusBox;
-                fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
-
-                // Switch the funding status to not funded
-                fundedStatusBox->setCurrentIndex(0);
-            }
-        }
+        // If a row is selected, set the Bill's funding status to not funded
+        switchFundingStatusIfSelected(row, 0);
     }
 }
 
@@ -871,38 +875,31 @@ void MainWindow::deleteBillOnClick()
     // Iterate over the bill table widget rows
     for(int row = 0; row < m_billTableWidget->rowCount(); row++)
     {
-        // Iterate over the columns in each row
-        for(int col = 0; col < m_billTableWidget->columnCount(); col++)
+        // If the current row being checked has been selected by the user
+        if(m_billTableWidget->item(row, 0)->isSelected())
         {
-            // Store the column header
-            QString columnHeader = m_billTableWidget->horizontalHeaderItem(col)->text();
+            // Retrieve the funding status combo box found in the third column
+            QComboBox *fundedStatusBox;
+            fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, 3);
 
-            // If the current column is the bill's funding status and the row is selected
-            if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING && m_billTableWidget->item(row, 0)->isSelected())
+            // If the funding status is marked as funded
+            if(fundedStatusBox->currentText() == m_FUNDED_STRING)
             {
-                // Retrieve the funding status combo box
-                QComboBox *fundedStatusBox;
-                fundedStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
+                // Add the bill's amount due back to the amount available by accessing the bill's amount due in the second column
+                m_totalAmountAvailable+= m_billTableWidget->item(row, 1)->text().toDouble();
 
-                // If the funding status is marked as funded
-                if(fundedStatusBox->currentText() == m_FUNDED_STRING)
-                {
-                    // Add the bill's amount due back to the amount available by accessing the bill's amount due in the second column
-                    m_totalAmountAvailable+= m_billTableWidget->item(row, col-2)->text().toDouble();
+                // Update the amount available line edit
+                m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
-                    // Update the amount available line edit
-                    m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
-
-                    // Remove this bill from the funded bill list by accessing the bill's name in the first column
-                    m_fundedBillsList.removeOne(m_billTableWidget->item(row, col-3)->text());
-                }
-
-                // Remove the selected row from the bill table widget
-                m_billTableWidget->removeRow(row);
-
-                // Decrement the row as there is now one less than before
-                row--;
+                // Remove this bill from the funded bill list by accessing the bill's name in the first column
+                m_fundedBillsList.removeOne(m_billTableWidget->item(row, 0)->text());
             }
+
+            // Remove the selected row from the bill table widget
+            m_billTableWidget->removeRow(row);
+
+            // Decrement the row as there is now one less than before
+            row--;
         }
     }
 }
