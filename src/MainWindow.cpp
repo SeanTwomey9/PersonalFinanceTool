@@ -92,7 +92,7 @@ MainWindow::MainWindow()
     m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
 
     // When the Reset Bills button is clicked, remove the existing configuration file and launch the initialization sequence
-    connect(m_resetBillsButton, SIGNAL(clicked()), this, SLOT(resetBillsOnClick()), Qt::AutoConnection);
+    connect(m_resetBillsButton, SIGNAL(clicked()), this, SLOT(createResetBillsConfirmationBox()), Qt::AutoConnection);
 
     // Organize the buttons into a grid layout
     createButtonGridLayout();
@@ -380,27 +380,27 @@ void MainWindow::welcomeFirstTimeUser()
 
     switch(welcomeBoxSelection)
     {
-    // If the user selects "Ok"
-    case QMessageBox::Ok :
-    {
-        // Ask for total funds available
-        askForTotalAmountAvailable();
-        break;
-    }
+        // If the user selects "Ok"
+        case QMessageBox::Ok :
+        {
+            // Ask for total funds available
+            askForTotalAmountAvailable();
+            break;
+        }
 
-        // If the user selects "Close"
-    case QMessageBox::Close :
-    {
-        // Exit application
-        emit conditionToTerminateMet();
-        break;
-    }
+            // If the user selects "Close"
+        case QMessageBox::Close :
+        {
+            // Exit application
+            emit conditionToTerminateMet();
+            break;
+        }
 
-        // Break in the default case
-    default:
-    {
-        break;
-    }
+            // Break in the default case
+        default:
+        {
+            break;
+        }
     }
 }
 
@@ -542,33 +542,33 @@ void MainWindow::openConfigForBillCreation()
     }
 }
 
-void MainWindow::createMissingBillDetailsBox()
+void MainWindow::createBoxWithNoResult(QString p_noResultPrimaryText, QString p_noResultInfoText)
 {
-    // Create the missing bill name QMessageBox with appropriate displayed text
-    QMessageBox missingBillDetailsBox;
-    missingBillDetailsBox.setText(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT);
-    missingBillDetailsBox.setInformativeText(m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
+    // Create the no result QMessageBox with text passed in as parameters
+    QMessageBox boxWithNoResult;
+    boxWithNoResult.setText(p_noResultPrimaryText);
+    boxWithNoResult.setInformativeText(p_noResultInfoText);
 
     // Give the user the options of "Ok'ing" the error
-    missingBillDetailsBox.setStandardButtons(QMessageBox::Ok);
+    boxWithNoResult.setStandardButtons(QMessageBox::Ok);
 
     // Store the user's selection
-    int missingBillDetailsBoxSelection = missingBillDetailsBox.exec();
+    int boxWithNoResultSelection = boxWithNoResult.exec();
 
-    switch(missingBillDetailsBoxSelection)
+    switch(boxWithNoResultSelection)
     {
-    // If the user selected Ok
-    case QMessageBox::Ok :
-    {
-        // Have the user return to the BillWidget to enter the missing bill name
-        break;
-    }
+        // If the user selected Ok
+        case QMessageBox::Ok :
+        {
+            // Close the message box so the user can continue what they're doing
+            break;
+        }
 
-    default:
-    {
-        // Default to have the user return to the BillWidget to enter the missing bill name
-        break;
-    }
+        default:
+        {
+            // Default to have the message box close so the user can continue what they're doing
+            break;
+        }
     }
 }
 
@@ -578,7 +578,7 @@ void MainWindow::saveBillAndDisplayBillWidget()
     if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
     {
         // Create the missing bill details message box
-        createMissingBillDetailsBox();
+        createBoxWithNoResult(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT, m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
     }
 
 
@@ -629,7 +629,7 @@ void MainWindow::saveBillAndDisplayBillTableWidget()
     else if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
     {
         // Create the missing bill details message box
-        createMissingBillDetailsBox();
+        createBoxWithNoResult(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT, m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
     }
 
     // Otherwise all fields are filled out appropriately
@@ -909,7 +909,64 @@ void MainWindow::deleteBillOnClick()
     }
 }
 
-void MainWindow::resetBillsOnClick()
+void MainWindow::createResetBillsConfirmationBox()
 {
-    m_configFileDirectory.remove(m_CONFIG_FILE_DIRECTORY_NAME);
+    // Create the reset bills QMessageBox with appropriate displayed text
+    QMessageBox resetBillsConfirmationBox;
+    resetBillsConfirmationBox.setText(m_RESET_BILLS_BOX_PRIMARY_TEXT);
+    resetBillsConfirmationBox.setInformativeText(m_RESET_BILLS_BOX_INFO_TEXT);
+
+    // Give the user the options of electing yes or no to reset their bills
+    resetBillsConfirmationBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    // Store the user's selection
+    int resetBillsConfirmationBoxSelection = resetBillsConfirmationBox.exec();
+
+    switch(resetBillsConfirmationBoxSelection)
+    {
+        // If the user selects yes
+        case QMessageBox::Yes :
+        {
+            // Remove the existing configuration file and launch the initialization sequence
+            resetBillsAndLaunchInitialization();
+            break;
+        }
+
+        // If the user selects no
+        case QMessageBox::No :
+        {
+            // Break and return to the bill table widget
+            break;
+        }
+
+        default:
+        {
+            // Default to breaking and returning to the bill table widget
+            break;
+        }
+    }
+}
+
+void MainWindow::resetBillsAndLaunchInitialization()
+{
+    // If the configuration file was successfully removed
+    if(m_configFileDirectory.remove(m_CONFIG_FILE_DIRECTORY_NAME))
+    {
+        // Hide the bill table widget
+        this->hide();
+
+        // Make sure to clear the bill map so the data to be shown in the bill table widget following initialization is reset
+        m_billMap.clear();
+
+        // Begin the initialization sequence
+        welcomeFirstTimeUser();
+    }
+
+    // Otherwise if the configuration file could not be removed
+    else
+    {
+        // Create an appropriate message box to alert the user
+        createBoxWithNoResult(m_RESET_FAIL_BOX_PRIMARY_TEXT, m_RESET_FAIL_BOX_INFO_TEXT);
+    }
+
 }

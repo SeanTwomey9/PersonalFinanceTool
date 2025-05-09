@@ -121,6 +121,8 @@ After the user is finished entering their bills, the bill table widget will be d
 
 The bill table widget can be used like a standard table, each cell can be edited via either entering text or interacting with a dropdown depending on the specific cell. The user can also select multiple rows in the widget and make use of the convenience buttons in the top right corner. When the user is finished making changes to their bill information, they can click the *Save* button which will update the total amount available (if they chose to fund or defund any bills) and write the updated information out to the configuration file.
 
+If the user wishes to reset their inputted bills, they can click the *Reset Bills* button. After confirming this action, they will be prompted to enter their next round of bills so they can start fresh.
+
 ## Common Errors
 
 1. If the user does not enter a name for the bill and/or the amount due, they will receive an error message indicating there's missing bill information.
