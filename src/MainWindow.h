@@ -18,6 +18,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QTableWidget>
+#include <QDir>
 
 /**
  * @brief The MainWindow class represents the primary window which will display the user's personal financial information.
@@ -98,6 +99,11 @@ public slots:
      * If the bill is funded, the amount of money allocated to that bill is returned to the total amount available, the bill is removed from the funded bills list, and lastly the row is removed from the bill table widget.
      */
     void deleteBillOnClick();
+
+    /**
+     * @brief Called when the Reset Bills button is pressed.
+     */
+    void resetBillsOnClick();
 
 private:
 
@@ -213,9 +219,10 @@ private:
     QGridLayout *m_buttonGridLayout = nullptr; //!< Grid layout used to organize buttons on the MainWindow.
 
     // Config file generation strings
+    QDir m_configFileDirectory;
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
-    const QString m_CONFIG_FILE_DIRECTORY = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
+    const QString m_CONFIG_FILE_DIRECTORY_NAME = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
 
     // Message box strings
     const QString m_INVALID_KEY_BOX_PRIMARY_TEXT = "Invalid Configuration File Key/Value Pair"; //!< The invalid key message box title.
@@ -259,6 +266,7 @@ private:
     const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill"; //!< Add another bill button text.
     const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill"; //!< Fund bill button text.
     const QString m_DEFUND_BILL_BUTTON_TEXT = "Defund Bill"; //!< Defund bill button text.
+    const QString m_RESET_BILLS_BUTTON_TEXT = "Reset Bills"; //!< Reset bills button text.
 
     // Widgets used throughout the MainWindow
     BillWidget *m_billWidget = nullptr; //!< Pointer to a BillWidget which allows the user to enter the bills they wish to keep track of.
@@ -274,6 +282,7 @@ private:
     QPushButton *m_addBillButton = nullptr; //!< Button used to add another bill to the bill table widget.
     QPushButton *m_fundBillButton = nullptr; //!< Button used to fund a bill in the bill table widget.
     QPushButton *m_defundBillButton = nullptr; //!< Button used to defund a bill in the bill table widget.
+    QPushButton *m_resetBillsButton = nullptr; //!< Button used to reset the bills recorded in the bill table widget.
 
     // Data structures used for storing bill information
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).

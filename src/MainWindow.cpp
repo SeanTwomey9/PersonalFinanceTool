@@ -11,7 +11,6 @@
 #include "BillWidget.h"
 
 #include <QFile>
-#include <QDir>
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QApplication>
@@ -88,6 +87,13 @@ MainWindow::MainWindow()
     // When the Defund Bill button is clicked, switch the selected bill's funding status to Not Funded
     connect(m_defundBillButton, SIGNAL(clicked()), this, SLOT(defundBillOnClick()), Qt::AutoConnection);
 
+    // Create the Reset Bills button
+    m_resetBillsButton = new QPushButton(this);
+    m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
+
+    // When the Reset Bills button is clicked, remove the existing configuration file and launch the initialization sequence
+    connect(m_resetBillsButton, SIGNAL(clicked()), this, SLOT(resetBillsOnClick()), Qt::AutoConnection);
+
     // Organize the buttons into a grid layout
     createButtonGridLayout();
 
@@ -117,6 +123,7 @@ MainWindow::~MainWindow()
     deleteButtonIfNonNull(m_deleteBillButton);
     deleteButtonIfNonNull(m_fundBillButton);
     deleteButtonIfNonNull(m_defundBillButton);
+    deleteButtonIfNonNull(m_resetBillsButton);
 
     // If the bill table widget has been created successfully
     if(m_billTableWidget != nullptr)
@@ -139,6 +146,7 @@ void MainWindow::createButtonGridLayout()
     m_buttonGridLayout->addWidget(m_fundBillButton, 1, 0);
     m_buttonGridLayout->addWidget(m_defundBillButton, 1, 1);
     m_buttonGridLayout->addWidget(m_saveButton, 2, 0);
+    m_buttonGridLayout->addWidget(m_resetBillsButton, 2, 1);
 
     // Ensure there is sufficient spacing between the buttons so they do not overlap
     m_buttonGridLayout->setHorizontalSpacing(5);
@@ -277,7 +285,7 @@ void MainWindow::parseConfigContents(QString p_groupLabel, QString p_key, QStrin
 void MainWindow::readConfigAndCreateUI()
 {
     // Attempt to open the pre-existing config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If attempting to open the config file resulted in an error
     if(m_settings.status() != QSettings::NoError)
@@ -334,18 +342,15 @@ void MainWindow::readConfigAndCreateUI()
 
 void MainWindow::attemptConfigFileGeneration()
 {
-    // Create a directory object
-    QDir configParentFolder;
-
     // If the config file path could not be generated
-    if(!configParentFolder.mkpath(m_CONFIG_PARENT_FOLDER))
+    if(!m_configFileDirectory.mkpath(m_CONFIG_PARENT_FOLDER))
     {
         // Display a message box to alert the user
         createFatalErrorBox(m_CONFIG_FILE_GENERATE_FAIL_BOX_PRIMARY_TEXT, m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT);
     }
 
     // The config file was found in the expected path
-    else if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
+    else if(QFile::exists(m_CONFIG_FILE_DIRECTORY_NAME))
     {
         // Read config file and create UI
         readConfigAndCreateUI();
@@ -492,7 +497,7 @@ QString MainWindow::removeSpaces(QString p_stringWithSpaces)
 void MainWindow::openConfigForBillCreation()
 {
     // Attempt to access the config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If the attempt to open the config file results in an error
     if(m_settings.status() != QSettings::NoError)
@@ -663,7 +668,7 @@ void MainWindow::askForTotalAmountAvailable()
         m_totalAmountAvailable = amountAvailable;
 
         // Attempt to open the config file
-        QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+        QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
         // If attempting to open the config file resulted in an error
         if(m_settings.status() != QSettings::NoError)
@@ -698,7 +703,7 @@ void MainWindow::askForTotalAmountAvailable()
 void MainWindow::updateConfigFromUI()
 {
     // Attempt to access the config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If the attempt to open the config file results in an error
     if(m_settings.status() != QSettings::NoError)
@@ -902,4 +907,9 @@ void MainWindow::deleteBillOnClick()
             row--;
         }
     }
+}
+
+void MainWindow::resetBillsOnClick()
+{
+    m_configFileDirectory.remove(m_CONFIG_FILE_DIRECTORY_NAME);
 }
