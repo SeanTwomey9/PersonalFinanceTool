@@ -11,7 +11,6 @@
 #include "BillWidget.h"
 
 #include <QFile>
-#include <QDir>
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QApplication>
@@ -88,6 +87,13 @@ MainWindow::MainWindow()
     // When the Defund Bill button is clicked, switch the selected bill's funding status to Not Funded
     connect(m_defundBillButton, SIGNAL(clicked()), this, SLOT(defundBillOnClick()), Qt::AutoConnection);
 
+    // Create the Reset Bills button
+    m_resetBillsButton = new QPushButton(this);
+    m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
+
+    // When the Reset Bills button is clicked, prompt the user to confirm the action before resetting or retaining bill data
+    connect(m_resetBillsButton, SIGNAL(clicked()), this, SLOT(createResetBillsConfirmationBox()), Qt::AutoConnection);
+
     // Organize the buttons into a grid layout
     createButtonGridLayout();
 
@@ -117,6 +123,7 @@ MainWindow::~MainWindow()
     deleteButtonIfNonNull(m_deleteBillButton);
     deleteButtonIfNonNull(m_fundBillButton);
     deleteButtonIfNonNull(m_defundBillButton);
+    deleteButtonIfNonNull(m_resetBillsButton);
 
     // If the bill table widget has been created successfully
     if(m_billTableWidget != nullptr)
@@ -139,6 +146,7 @@ void MainWindow::createButtonGridLayout()
     m_buttonGridLayout->addWidget(m_fundBillButton, 1, 0);
     m_buttonGridLayout->addWidget(m_defundBillButton, 1, 1);
     m_buttonGridLayout->addWidget(m_saveButton, 2, 0);
+    m_buttonGridLayout->addWidget(m_resetBillsButton, 2, 1);
 
     // Ensure there is sufficient spacing between the buttons so they do not overlap
     m_buttonGridLayout->setHorizontalSpacing(5);
@@ -277,7 +285,7 @@ void MainWindow::parseConfigContents(QString p_groupLabel, QString p_key, QStrin
 void MainWindow::readConfigAndCreateUI()
 {
     // Attempt to open the pre-existing config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If attempting to open the config file resulted in an error
     if(m_settings.status() != QSettings::NoError)
@@ -334,18 +342,15 @@ void MainWindow::readConfigAndCreateUI()
 
 void MainWindow::attemptConfigFileGeneration()
 {
-    // Create a directory object
-    QDir configParentFolder;
-
     // If the config file path could not be generated
-    if(!configParentFolder.mkpath(m_CONFIG_PARENT_FOLDER))
+    if(!m_configFileDirectory.mkpath(m_CONFIG_PARENT_FOLDER))
     {
         // Display a message box to alert the user
         createFatalErrorBox(m_CONFIG_FILE_GENERATE_FAIL_BOX_PRIMARY_TEXT, m_CONFIG_FILE_GENERATE_FAIL_BOX_INFO_TEXT);
     }
 
     // The config file was found in the expected path
-    else if(QFile::exists(m_CONFIG_FILE_DIRECTORY))
+    else if(QFile::exists(m_CONFIG_FILE_DIRECTORY_NAME))
     {
         // Read config file and create UI
         readConfigAndCreateUI();
@@ -375,27 +380,27 @@ void MainWindow::welcomeFirstTimeUser()
 
     switch(welcomeBoxSelection)
     {
-    // If the user selects "Ok"
-    case QMessageBox::Ok :
-    {
-        // Ask for total funds available
-        askForTotalAmountAvailable();
-        break;
-    }
+        // If the user selects "Ok"
+        case QMessageBox::Ok :
+        {
+            // Ask for total funds available
+            askForTotalAmountAvailable();
+            break;
+        }
 
-        // If the user selects "Close"
-    case QMessageBox::Close :
-    {
-        // Exit application
-        emit conditionToTerminateMet();
-        break;
-    }
+            // If the user selects "Close"
+        case QMessageBox::Close :
+        {
+            // Exit application
+            emit conditionToTerminateMet();
+            break;
+        }
 
-        // Break in the default case
-    default:
-    {
-        break;
-    }
+            // Break in the default case
+        default:
+        {
+            break;
+        }
     }
 }
 
@@ -492,7 +497,7 @@ QString MainWindow::removeSpaces(QString p_stringWithSpaces)
 void MainWindow::openConfigForBillCreation()
 {
     // Attempt to access the config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If the attempt to open the config file results in an error
     if(m_settings.status() != QSettings::NoError)
@@ -537,33 +542,33 @@ void MainWindow::openConfigForBillCreation()
     }
 }
 
-void MainWindow::createMissingBillDetailsBox()
+void MainWindow::createBoxWithNoResult(QString p_noResultPrimaryText, QString p_noResultInfoText)
 {
-    // Create the missing bill name QMessageBox with appropriate displayed text
-    QMessageBox missingBillDetailsBox;
-    missingBillDetailsBox.setText(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT);
-    missingBillDetailsBox.setInformativeText(m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
+    // Create the no result QMessageBox with text passed in as parameters
+    QMessageBox boxWithNoResult;
+    boxWithNoResult.setText(p_noResultPrimaryText);
+    boxWithNoResult.setInformativeText(p_noResultInfoText);
 
     // Give the user the options of "Ok'ing" the error
-    missingBillDetailsBox.setStandardButtons(QMessageBox::Ok);
+    boxWithNoResult.setStandardButtons(QMessageBox::Ok);
 
     // Store the user's selection
-    int missingBillDetailsBoxSelection = missingBillDetailsBox.exec();
+    int boxWithNoResultSelection = boxWithNoResult.exec();
 
-    switch(missingBillDetailsBoxSelection)
+    switch(boxWithNoResultSelection)
     {
-    // If the user selected Ok
-    case QMessageBox::Ok :
-    {
-        // Have the user return to the BillWidget to enter the missing bill name
-        break;
-    }
+        // If the user selected Ok
+        case QMessageBox::Ok :
+        {
+            // Close the message box so the user can continue what they're doing
+            break;
+        }
 
-    default:
-    {
-        // Default to have the user return to the BillWidget to enter the missing bill name
-        break;
-    }
+        default:
+        {
+            // Default to have the message box close so the user can continue what they're doing
+            break;
+        }
     }
 }
 
@@ -573,7 +578,7 @@ void MainWindow::saveBillAndDisplayBillWidget()
     if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
     {
         // Create the missing bill details message box
-        createMissingBillDetailsBox();
+        createBoxWithNoResult(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT, m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
     }
 
 
@@ -624,7 +629,7 @@ void MainWindow::saveBillAndDisplayBillTableWidget()
     else if(m_billWidget->getNameInput()->text().isEmpty() || m_billWidget->getAmountDueInput()->text().isEmpty())
     {
         // Create the missing bill details message box
-        createMissingBillDetailsBox();
+        createBoxWithNoResult(m_MISSING_BILL_DETAILS_BOX_PRIMARY_TEXT, m_MISSING_BILL_DETAILS_BOX_INFO_TEXT);
     }
 
     // Otherwise all fields are filled out appropriately
@@ -663,7 +668,7 @@ void MainWindow::askForTotalAmountAvailable()
         m_totalAmountAvailable = amountAvailable;
 
         // Attempt to open the config file
-        QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+        QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
         // If attempting to open the config file resulted in an error
         if(m_settings.status() != QSettings::NoError)
@@ -698,7 +703,7 @@ void MainWindow::askForTotalAmountAvailable()
 void MainWindow::updateConfigFromUI()
 {
     // Attempt to access the config file
-    QSettings m_settings(m_CONFIG_FILE_DIRECTORY, QSettings::IniFormat);
+    QSettings m_settings(m_CONFIG_FILE_DIRECTORY_NAME, QSettings::IniFormat);
 
     // If the attempt to open the config file results in an error
     if(m_settings.status() != QSettings::NoError)
@@ -902,4 +907,66 @@ void MainWindow::deleteBillOnClick()
             row--;
         }
     }
+}
+
+void MainWindow::createResetBillsConfirmationBox()
+{
+    // Create the reset bills QMessageBox with appropriate displayed text
+    QMessageBox resetBillsConfirmationBox;
+    resetBillsConfirmationBox.setText(m_RESET_BILLS_BOX_PRIMARY_TEXT);
+    resetBillsConfirmationBox.setInformativeText(m_RESET_BILLS_BOX_INFO_TEXT);
+
+    // Give the user the options of electing yes or no to reset their bills
+    resetBillsConfirmationBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    // Store the user's selection
+    int resetBillsConfirmationBoxSelection = resetBillsConfirmationBox.exec();
+
+    switch(resetBillsConfirmationBoxSelection)
+    {
+        // If the user selects yes
+        case QMessageBox::Yes :
+        {
+            // Remove the existing configuration file and launch the initialization sequence
+            resetBillsAndLaunchInitialization();
+            break;
+        }
+
+        // If the user selects no
+        case QMessageBox::No :
+        {
+            // Break and return to the bill table widget
+            break;
+        }
+
+        default:
+        {
+            // Default to breaking and returning to the bill table widget
+            break;
+        }
+    }
+}
+
+void MainWindow::resetBillsAndLaunchInitialization()
+{
+    // If the configuration file was successfully removed
+    if(m_configFileDirectory.remove(m_CONFIG_FILE_DIRECTORY_NAME))
+    {
+        // Hide the bill table widget
+        this->hide();
+
+        // Make sure to clear the bill map so the data to be shown in the bill table widget following initialization is reset
+        m_billMap.clear();
+
+        // Begin the initialization sequence
+        welcomeFirstTimeUser();
+    }
+
+    // Otherwise if the configuration file could not be removed
+    else
+    {
+        // Create an appropriate message box to alert the user
+        createBoxWithNoResult(m_RESET_FAIL_BOX_PRIMARY_TEXT, m_RESET_FAIL_BOX_INFO_TEXT);
+    }
+
 }
