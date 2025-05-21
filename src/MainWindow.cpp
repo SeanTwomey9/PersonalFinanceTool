@@ -91,7 +91,7 @@ MainWindow::MainWindow()
     m_resetBillsButton = new QPushButton(this);
     m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
 
-    // When the Reset Bills button is clicked, remove the existing configuration file and launch the initialization sequence
+    // When the Reset Bills button is clicked, prompt the user to confirm the action before resetting or retaining bill data
     connect(m_resetBillsButton, SIGNAL(clicked()), this, SLOT(createResetBillsConfirmationBox()), Qt::AutoConnection);
 
     // Organize the buttons into a grid layout

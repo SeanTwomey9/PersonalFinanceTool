@@ -233,7 +233,7 @@ private:
     QDir m_configFileDirectory; //!< The directory object used to manipulate the config file.
     const QString m_CONFIG_FILE_NAME = m_APP_NAME + ".ini"; //!< The name of the config file.
     const QString m_CONFIG_PARENT_FOLDER = "config/"; //!< The parent folder of the config file.
-    const QString m_CONFIG_FILE_DIRECTORY_NAME = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read/generated if absent.
+    const QString m_CONFIG_FILE_DIRECTORY_NAME = m_CONFIG_PARENT_FOLDER + m_CONFIG_FILE_NAME; //!< The path where the config file should be read or generated if absent.
 
     // Message box strings
     const QString m_INVALID_KEY_BOX_PRIMARY_TEXT = "Invalid Configuration File Key/Value Pair"; //!< The invalid key message box title.
@@ -248,7 +248,7 @@ private:
     const QString m_WELCOME_BOX_INFO_TEXT = "In the subsequent prompts, you will be asked to provide some financial information."; //!< The welcome message box informative text.
     const QString m_RESET_BILLS_BOX_PRIMARY_TEXT = "Reset Bills?"; //!< The reset bills message box primary text.
     const QString m_RESET_BILLS_BOX_INFO_TEXT = "Are you sure you would like to reset all bills and start fresh?"; //!< The reset bills message box informative text.
-    const QString m_RESET_FAIL_BOX_PRIMARY_TEXT = "Failed To Reset Bills"; //!< The failed to reset bells primary text.
+    const QString m_RESET_FAIL_BOX_PRIMARY_TEXT = "Failed To Reset Bills"; //!< The failed to reset bills primary text.
     const QString m_RESET_FAIL_BOX_INFO_TEXT = "The configuration file could not be removed. Please close the application, manually delete " + m_CONFIG_FILE_DIRECTORY_NAME +
                                                " from the application folder, and re-launch the application."; //!< The failed to reset bills informative text.
 
@@ -298,7 +298,7 @@ private:
     QPushButton *m_addBillButton = nullptr; //!< Button used to add another bill to the bill table widget.
     QPushButton *m_fundBillButton = nullptr; //!< Button used to fund a bill in the bill table widget.
     QPushButton *m_defundBillButton = nullptr; //!< Button used to defund a bill in the bill table widget.
-    QPushButton *m_resetBillsButton = nullptr; //!< Button used to reset the bills recorded in the bill table widget.
+    QPushButton *m_resetBillsButton = nullptr; //!< Button used to reset the bills recorded in the bill table widget as well as in the bill map.
 
     // Data structures used for storing bill information
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
