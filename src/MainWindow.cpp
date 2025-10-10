@@ -515,7 +515,7 @@ void MainWindow::openConfigForBillCreation()
         QDate enteredBillDueDate = m_billWidget->getDueDateInput()->date();
 
         // Write the Bill's name with spaces removed to the config file
-        m_settings.beginGroup(removeSpaces(enteredBillName));
+        m_settings.beginGroup(enteredBillName);
 
         // Write the amount due to the config file in decimal format
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, QString::number(enteredBillAmountDue, 'f', 2));
@@ -538,7 +538,7 @@ void MainWindow::openConfigForBillCreation()
         enteredBill.setFundedStatus(false);
 
         // Insert the Bill object into the map with a key of the name of the bill with spaces removed
-        m_billMap[removeSpaces(enteredBillName)] = enteredBill;
+        m_billMap[enteredBillName] = enteredBill;
     }
 }
 
@@ -727,9 +727,6 @@ void MainWindow::updateConfigFromUI()
             // Store the name of the bill which is stored in the first column
             QString billName = m_billTableWidget->item(row, 0)->text();
 
-            // Remove spaces from the bill name for easier handling in the config file
-            QString billNameNoSpaces = removeSpaces(billName);
-
             // Create a temporary bill object to be inserted into the bill map
             Bill savedBill;
 
@@ -746,14 +743,14 @@ void MainWindow::updateConfigFromUI()
                     savedBill.setName(billName);
 
                     // Since the bill name is checked first, we can insert a bill name, bill object key-value pair into the map
-                    m_billMap[billNameNoSpaces] = savedBill;
+                    m_billMap[billName] = savedBill;
                 }
 
                 // Otherwise if the column header is the amount due
                 else if(columnHeader == m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING)
                 {
                     // Update the bill's amount due in the map
-                    m_billMap[billNameNoSpaces].setAmountDue(m_billTableWidget->item(row, col)->text().toDouble());
+                    m_billMap[billName].setAmountDue(m_billTableWidget->item(row, col)->text().toDouble());
                 }
 
                 // Otherwise if the column header is the due date
@@ -764,7 +761,7 @@ void MainWindow::updateConfigFromUI()
                     savedDate = (QDateEdit*)m_billTableWidget->cellWidget(row, col);
 
                     // Update the bill's due date in the map
-                    m_billMap[billNameNoSpaces].setDueDate(savedDate->date());
+                    m_billMap[billName].setDueDate(savedDate->date());
                 }
 
                 // Otherwise the column header must be the funding status
@@ -778,23 +775,23 @@ void MainWindow::updateConfigFromUI()
                     QString fundingStatus = fundedStatusBox->currentText();
 
                     // Update the bill's funding status in the map
-                    m_billMap[billNameNoSpaces].setFundedStatus(fundingStatusStringToBoolean(fundingStatus));
+                    m_billMap[billName].setFundedStatus(fundingStatusStringToBoolean(fundingStatus));
 
                     // If a bill is marked as funded and is not already in the funded bill list
-                    if(m_billMap[billNameNoSpaces].isFunded() && !m_fundedBillsList.contains(savedBill.getName()))
+                    if(m_billMap[billName].isFunded() && !m_fundedBillsList.contains(savedBill.getName()))
                     {
                         // Subtract the bill's amount due from the amount available as the funds set aside for this bill are no longer available
-                        m_totalAmountAvailable -= m_billMap[billNameNoSpaces].getAmountDue();
+                        m_totalAmountAvailable -= m_billMap[billName].getAmountDue();
 
                         // Add this bill to the funded bill list
                         m_fundedBillsList.append(savedBill.getName());
                     }
 
                     // Otherwise if a bill has been switched to no longer be funded (in the event of a defund) but is presently in the funded bill list
-                    else if(!m_billMap[billNameNoSpaces].isFunded() && m_fundedBillsList.contains(savedBill.getName()))
+                    else if(!m_billMap[billName].isFunded() && m_fundedBillsList.contains(savedBill.getName()))
                     {
                         // Add the bill's amount due back into the amount available as the bill no longer requires the funding set aside previously
-                        m_totalAmountAvailable += m_billMap[billNameNoSpaces].getAmountDue();
+                        m_totalAmountAvailable += m_billMap[billName].getAmountDue();
 
                         // Remove the bill from the funded bill list
                         m_fundedBillsList.removeOne(savedBill.getName());
@@ -831,7 +828,7 @@ void MainWindow::updateConfigFromUI()
         Bill currentBill = *billMapIterator;
 
         // Set the group label as the bill name
-        m_settings.beginGroup(removeSpaces(currentBill.getName()));
+        m_settings.beginGroup(currentBill.getName());
 
         // Write the bill amount due, due date, and status key-value pairs to the config file
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
