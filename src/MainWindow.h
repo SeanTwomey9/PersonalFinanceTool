@@ -251,6 +251,8 @@ private:
     const QString m_RESET_FAIL_BOX_PRIMARY_TEXT = "Failed To Reset Bills"; //!< The failed to reset bills primary text.
     const QString m_RESET_FAIL_BOX_INFO_TEXT = "The configuration file could not be removed. Please close the application, manually delete " + m_CONFIG_FILE_DIRECTORY_NAME +
                                                " from the application folder, and re-launch the application."; //!< The failed to reset bills informative text.
+    const QString m_SAVE_SUCCESSFULL_PRIMARY_TEXT = "Bills Saved Successfully"; //!< The bills saved successfully primary text.
+    QString m_SAVE_SUCCESSFULL_INFO_TEXT = "Your total amount available to spend is $"; //!< The bills saved successfully informative text.
 
     // Total amount available variables
     const QString m_TOTAL_AMOUNT_AVAILABLE_STRING = "Total Amount Available: $"; //!< The total amount available represented as a string.

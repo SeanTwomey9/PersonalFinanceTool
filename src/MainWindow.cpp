@@ -807,6 +807,9 @@ void MainWindow::updateConfigFromUI()
     // Update the amount available line edit with the updated value set to two decimal places
     m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
 
+    // Inform the user their bills were saved successfully and the total amount they have left over
+    createBoxWithNoResult(m_SAVE_SUCCESSFULL_PRIMARY_TEXT, m_SAVE_SUCCESSFULL_INFO_TEXT + QString::number(m_totalAmountAvailable));
+
     // Clear the settings object in preparation for updating the config file
     m_settings.clear();
 
