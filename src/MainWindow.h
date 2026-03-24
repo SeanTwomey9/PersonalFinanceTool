@@ -94,6 +94,18 @@ public slots:
     void defundBillOnClick();
 
     /**
+     * @brief Called when the Pay Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
+     * If a row is selected, the bill corresponding to that row will have its payment status set to Paid.
+     */
+    void payBillOnClick();
+
+    /**
+     * @brief Called when the Unpay Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
+     * If a row is selected, the bill corresponding to that row will have its payment status set to Not Paid.
+     */
+    void unPayBillOnClick();
+
+    /**
      * @brief Called when the Delete Bill button is pressed. Iterates over the rows and columns of the bill table widget checking for which rows are selected.
      * If a row is selected, the bill corresponding to that row will have its funding status checked for a value of Funded.
      * If the bill is funded, the amount of money allocated to that bill is returned to the total amount available, the bill is removed from the funded bills list, and lastly the row is removed from the bill table widget.
@@ -271,19 +283,23 @@ private:
     const QString m_BILL_AMOUNT_DUE_KEY = "AmountDue"; //!< The amount due key which maps to various amounts due of bills.
     const QString m_BILL_DUE_DATE_KEY = "DueDate"; //!< The due date key which maps to various due dates of bills.
     const QString m_BILL_FUNDING_STATUS_KEY = "FundingStatus"; //!< The funding status key which maps to whether or not a bill has been funded.
+    const QString m_BILL_PAYMENT_STATUS_KEY = "PaymentStatus"; //!< The payment status key which maps to whether or not a bill has been paid.
 
     // Bill table widget strings
     const QString m_BILL_NAME_COLUMN_HEADER_STRING = "Bill Name"; //!< The bill name column title.
     const QString m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING = "Amount Due"; //!< The bill amount due column title.
     const QString m_BILL_DUE_DATE_COLUMN_HEADER_STRING = "Due Date"; //!< The bill due date column title.
     const QString m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING = "Funding Status"; //!< The bill funding status column title.
+    const QString m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING = "Payment Status"; //!< The bill payment status column title.
 
     // Button text strings
     const QString m_SAVE_BUTTON_TEXT = "Save"; //!< Save button text.
-    const QString m_DELETE_BUTTON_TEXT = "Delete"; //!< Delete button text.
+    const QString m_DELETE_BUTTON_TEXT = "Delete Bill"; //!< Delete bill button text.
     const QString m_ADD_BILL_BUTTON_TEXT = "Add Another Bill"; //!< Add another bill button text.
     const QString m_FUND_BILL_BUTTON_TEXT = "Fund Bill"; //!< Fund bill button text.
     const QString m_DEFUND_BILL_BUTTON_TEXT = "Defund Bill"; //!< Defund bill button text.
+    const QString m_PAY_BILL_BUTTON_TEXT = "Pay Bill"; //!< Pay bill button text.
+    const QString m_UNPAY_BILL_BUTTON_TEXT = "Unpay Bill"; //!< Unpay bill button text.
     const QString m_RESET_BILLS_BUTTON_TEXT = "Reset Bills"; //!< Reset bills button text.
 
     // Widgets used throughout the MainWindow
@@ -300,6 +316,8 @@ private:
     QPushButton *m_addBillButton = nullptr; //!< Button used to add another bill to the bill table widget.
     QPushButton *m_fundBillButton = nullptr; //!< Button used to fund a bill in the bill table widget.
     QPushButton *m_defundBillButton = nullptr; //!< Button used to defund a bill in the bill table widget.
+    QPushButton *m_payBillButton = nullptr; //!< Button used to pay a bill in the bill table widget.
+    QPushButton *m_unPayBillButton = nullptr; //!< Button used to unpay a bill in the bill table widget.
     QPushButton *m_resetBillsButton = nullptr; //!< Button used to reset the bills recorded in the bill table widget as well as in the bill map.
 
     // Data structures used for storing bill information
@@ -309,6 +327,8 @@ private:
     // Miscellaneous variables
     const QString m_FUNDED_STRING = "Funded"; //!< Funded status of funded represented as a string.
     const QString m_NOT_FUNDED_STRING = "Not Funded"; //!< Funded status of not funded represented as a string.
+    const QString m_PAID_STRING = "Paid"; //!< Payment staus of paid represented as a string.
+    const QString m_NOT_PAID_STRING = "Not Paid"; //!< Payment status of not paid represented as a string.
     const QString m_DATE_STRING_FORMAT = "M/d/yyyy"; //!< The format to use when converting dates to strings.
 };
 #endif // MAINWINDOW_H

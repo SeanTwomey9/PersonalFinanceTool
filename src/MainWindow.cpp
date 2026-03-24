@@ -87,6 +87,10 @@ MainWindow::MainWindow()
     // When the Defund Bill button is clicked, switch the selected bill's funding status to Not Funded
     connect(m_defundBillButton, SIGNAL(clicked()), this, SLOT(defundBillOnClick()), Qt::AutoConnection);
 
+    // Create the Pay Bill button
+    m_payBillButton = new QPushButton(this);
+    m_payBillButton->setText(m_PAY_BILL_BUTTON_TEXT);
+
     // Create the Reset Bills button
     m_resetBillsButton = new QPushButton(this);
     m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
@@ -117,7 +121,7 @@ MainWindow::~MainWindow()
     // Properly delete the amount available line edit
     deleteLineEditIfNonNull(m_amountAvailableEdit);
 
-    // Properly delete the all buttons
+    // Properly delete all buttons
     deleteButtonIfNonNull(m_saveButton);
     deleteButtonIfNonNull(m_addBillButton);
     deleteButtonIfNonNull(m_deleteBillButton);

@@ -57,6 +57,18 @@ void Bill::setFundedStatus(bool p_updatedFundingStatus)
     m_isFunded = p_updatedFundingStatus;
 }
 
+bool Bill::isPaid()
+{
+    // Return the payment status
+    return m_isPaid;
+}
+
+void Bill::setPaymentStatus(bool p_updatedPaymentStatus)
+{
+    // Update the payment status
+    m_isPaid = p_updatedPaymentStatus;
+}
+
 
 bool operator == (const Bill &p_firstBill, const Bill &p_secondBill)
 {
