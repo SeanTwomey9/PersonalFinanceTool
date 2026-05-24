@@ -91,6 +91,16 @@ MainWindow::MainWindow()
     m_payBillButton = new QPushButton(this);
     m_payBillButton->setText(m_PAY_BILL_BUTTON_TEXT);
 
+    // When the Pay Bill button is clicked, switch the selected bill's payment status to Paid
+    connect(m_payBillButton, SIGNAL(clicked()), this, SLOT(payBillOnClick()), Qt::AutoConnection);
+
+    // Create the Unpay Bill button
+    m_unPayBillButton = new QPushButton(this);
+    m_unPayBillButton->setText(m_UNPAY_BILL_BUTTON_TEXT);
+
+    // when the Unpay Bill button is clicked, switch the selected bill's payment status to Not Paid
+    connect(m_unPayBillButton, SIGNAL(clicked()), this, SLOT(unPayBillOnClick()), Qt::AutoConnection);
+
     // Create the Reset Bills button
     m_resetBillsButton = new QPushButton(this);
     m_resetBillsButton->setText(m_RESET_BILLS_BUTTON_TEXT);
@@ -151,6 +161,8 @@ void MainWindow::createButtonGridLayout()
     m_buttonGridLayout->addWidget(m_defundBillButton, 1, 1);
     m_buttonGridLayout->addWidget(m_saveButton, 2, 0);
     m_buttonGridLayout->addWidget(m_resetBillsButton, 2, 1);
+    m_buttonGridLayout->addWidget(m_payBillButton, 3, 0);
+    m_buttonGridLayout->addWidget(m_unPayBillButton, 3, 1);
 
     // Ensure there is sufficient spacing between the buttons so they do not overlap
     m_buttonGridLayout->setHorizontalSpacing(5);
@@ -171,10 +183,10 @@ void MainWindow::createTableWidgetUsingMap()
     m_billTableWidget->setRowCount(m_billMap.size());
 
     // Set the number of columns to the number of fields which each Bill displays
-    m_billTableWidget->setColumnCount(4);
+    m_billTableWidget->setColumnCount(5);
 
     // Set the table widget headers to the appropriate fields each Bill displays
-    m_billTableWidget->setHorizontalHeaderLabels(QString(m_BILL_NAME_COLUMN_HEADER_STRING + ";" + m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING + ";" + m_BILL_DUE_DATE_COLUMN_HEADER_STRING + ";" + m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING).split(";"));
+    m_billTableWidget->setHorizontalHeaderLabels(QString(m_BILL_NAME_COLUMN_HEADER_STRING + ";" + m_BILL_AMOUNT_DUE_COLUMN_HEADER_STRING + ";" + m_BILL_DUE_DATE_COLUMN_HEADER_STRING + ";" + m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING + ";" + m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING).split(";"));
 
     // Initialize the row we're setting to zero
     int row = 0;
@@ -203,11 +215,18 @@ void MainWindow::createTableWidgetUsingMap()
         fundedStatusBox->addItem(m_FUNDED_STRING);
         currentBill.isFunded() ? fundedStatusBox->setCurrentIndex(1) : fundedStatusBox->setCurrentIndex(0);
 
+        // Create a combo box to hold the payment status of the bill
+        QComboBox *paymentStatusBox = new QComboBox(this);
+        paymentStatusBox->addItem(m_NOT_PAID_STRING);
+        paymentStatusBox->addItem(m_PAID_STRING);
+        currentBill.isPaid() ? paymentStatusBox->setCurrentIndex(1) : fundedStatusBox->setCurrentIndex(0);
+
         // Set the columns appropriately to the Bill's attributes
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
         m_billTableWidget->setItem(row, 1, new QTableWidgetItem(QString::number(currentBill.getAmountDue(), 'f', 2)));
         m_billTableWidget->setCellWidget(row, 2, dateEdit);
         m_billTableWidget->setCellWidget(row, 3, fundedStatusBox);
+        m_billTableWidget->setCellWidget(row, 4, paymentStatusBox);
 
         // Increment the row for the next Bill
         row++;
@@ -859,6 +878,20 @@ void MainWindow::switchFundingStatusIfSelected(int p_widgetRow, int p_isFunded)
     }
 }
 
+void MainWindow::switchPaymentStatusIfSelected(int p_widgetRow, int p_isPaid)
+{
+    // If the current row being checked has been selected by the user
+    if(m_billTableWidget->item(p_widgetRow, 0)->isSelected())
+    {
+        // Retrieve the payment status combo box found in the third column
+        QComboBox *paymentStatusBox;
+        paymentStatusBox = (QComboBox*)m_billTableWidget->cellWidget(p_widgetRow, 4);
+
+        // Switch the funding status to either paid or not paid
+        paymentStatusBox->setCurrentIndex(p_isPaid);
+    }
+}
+
 void MainWindow::fundBillOnClick()
 {
     // Iterate over the bill table widget rows
@@ -876,6 +909,26 @@ void MainWindow::defundBillOnClick()
     {
         // If a row is selected, set the Bill's funding status to not funded
         switchFundingStatusIfSelected(row, 0);
+    }
+}
+
+void MainWindow::payBillOnClick()
+{
+    // Iterate over the bill table widget rows
+    for(int row = 0; row < m_billTableWidget->rowCount(); row++)
+    {
+        // If a row is selected, set the Bill's payment status to paid
+        switchPaymentStatusIfSelected(row, 1);
+    }
+}
+
+void MainWindow::unPayBillOnClick()
+{
+    // Iterate over the bill table widget rows
+    for(int row = 0; row < m_billTableWidget->rowCount(); row++)
+    {
+        // If a row is selected, set the Bill's payment status to not paid
+        switchPaymentStatusIfSelected(row, 0);
     }
 }
 

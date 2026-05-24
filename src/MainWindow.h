@@ -232,6 +232,13 @@ private:
     void switchFundingStatusIfSelected(int p_widgetRow, int p_isFunded);
 
     /**
+     * @brief If a row in the bill table widget is selected, set the associated Bill's payment status to either paid or not paid.
+     * @param p_widgetRow - The row of the bill table widget being checked for selection.
+     * @param p_isFunded - The Bill's payment status, 1 for paid and 0 for not paid.
+     */
+    void switchPaymentStatusIfSelected(int p_widgetRow, int p_isPaid);
+
+    /**
      * @brief Called when the user confirms they'd like to reset their bills.
      * Deletes the existing configuration file and launches the initialization sequence.
      */
