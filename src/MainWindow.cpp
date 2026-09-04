@@ -219,7 +219,7 @@ void MainWindow::createTableWidgetUsingMap()
         QComboBox *paymentStatusBox = new QComboBox(this);
         paymentStatusBox->addItem(m_NOT_PAID_STRING);
         paymentStatusBox->addItem(m_PAID_STRING);
-        currentBill.isPaid() ? paymentStatusBox->setCurrentIndex(1) : fundedStatusBox->setCurrentIndex(0);
+        currentBill.isPaid() ? paymentStatusBox->setCurrentIndex(1) : paymentStatusBox->setCurrentIndex(0);
 
         // Set the columns appropriately to the Bill's attributes
         m_billTableWidget->setItem(row, 0, new QTableWidgetItem(currentBill.getName()));
@@ -288,8 +288,8 @@ void MainWindow::parseConfigContents(QString p_groupLabel, QString p_key, QStrin
                 m_billMap[p_groupLabel].setDueDate(convertDateStringToDate(p_value));
             }
 
-            // Otherwise, the key label is the funding status
-            else
+            // Otherwise if the key label is the funding status
+            else if(p_key == m_BILL_FUNDING_STATUS_KEY)
             {
                 // Set the appropriate Bill's funding status in the bill map by converting the funding status string to a boolean
                 m_billMap[p_groupLabel].setFundedStatus(fundingStatusStringToBoolean(p_value));
@@ -298,6 +298,20 @@ void MainWindow::parseConfigContents(QString p_groupLabel, QString p_key, QStrin
                 if(m_billMap[p_groupLabel].isFunded())
                 {
                     // Add the Bill's name to the funded list to assist with updating the total amount available
+                    m_fundedBillsList.append(m_billMap[p_groupLabel].getName());
+                }
+            }
+
+            // Otherwise if the key label is the payment status
+            else if(p_key == m_BILL_PAYMENT_STATUS_KEY)
+            {
+                // Set the appropriate Bill's payment status in the bill map by converting the payment status string to a boolean
+                m_billMap[p_groupLabel].setPaymentStatus(paymentStatusStringToBoolean(p_value));
+
+                // If the Bill is currently paid
+                if(m_billMap[p_groupLabel].isPaid())
+                {
+                    // Add the Bill's name to the paid list to assist with updating the total amount available
                     m_fundedBillsList.append(m_billMap[p_groupLabel].getName());
                 }
             }
@@ -506,6 +520,18 @@ bool MainWindow::fundingStatusStringToBoolean(QString p_fundingStatus)
 {
     // If the bill has a funding status of "Funded", return true, otherwise return false
     return p_fundingStatus == m_FUNDED_STRING ? true : false;
+}
+
+QString MainWindow::paymentStatusBooleanToString(bool p_isBillPaid)
+{
+    // If the bill has been paid, return the paid string, otherwise return the not paid string
+    return p_isBillPaid ? m_PAID_STRING : m_NOT_PAID_STRING;
+}
+
+bool MainWindow::paymentStatusStringToBoolean(QString p_paymentStatus)
+{
+    // If the bill has a payment status of "Paid", return true, otherwise return false
+    return p_paymentStatus == m_PAID_STRING ? true : false;
 }
 
 QString MainWindow::removeSpaces(QString p_stringWithSpaces)
@@ -787,8 +813,8 @@ void MainWindow::updateConfigFromUI()
                     m_billMap[billName].setDueDate(savedDate->date());
                 }
 
-                // Otherwise the column header must be the funding status
-                else
+                // Otherwise if the column header is the funding status
+                else if(columnHeader == m_BILL_FUNDING_STATUS_COLUMN_HEADER_STRING)
                 {
                     // Retrieve the funded status combo box from the bill table widget
                     QComboBox *fundedStatusBox;
@@ -818,6 +844,40 @@ void MainWindow::updateConfigFromUI()
 
                         // Remove the bill from the funded bill list
                         m_fundedBillsList.removeOne(savedBill.getName());
+                    }
+                }
+
+                // Otherwise the column header must be the payment status
+                else if(columnHeader == m_BILL_PAYMENT_STATUS_COLUMN_HEADER_STRING)
+                {
+                    // Retrieve the payment status combo box from the bill table widget
+                    QComboBox *paymentStatusBox;
+                    paymentStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, col);
+
+                    // Store the current payment status
+                    QString paymentStatus = paymentStatusBox->currentText();
+
+                    // Update the bill's payment status in the map
+                    m_billMap[billName].setPaymentStatus(paymentStatusStringToBoolean(paymentStatus));
+
+                    // If a bill is marked as paid and is not already in the paid bill list
+                    if(m_billMap[billName].isPaid() && !m_paidBillsList.contains(savedBill.getName()))
+                    {
+                        // Add the bill's amount due to the total amount spent since the bill has been paid
+                        m_totalAmountSpent += m_billMap[billName].getAmountDue();
+
+                        // Add this bill to the paid bill list
+                        m_paidBillsList.append(savedBill.getName());
+                    }
+
+                    // Otherwise if a bill has been switched to no longer be paid (in the event of a misclick/payment error) but is presently in the paid bill list
+                    else if(!m_billMap[billName].isPaid() && m_paidBillsList.contains(savedBill.getName()))
+                    {
+                        // Subtract the bill's amount due from the total amount spent as the bill has no longer been paid
+                        m_totalAmountSpent -= m_billMap[billName].getAmountDue();
+
+                        // Remove the bill from the paid bill list
+                        m_paidBillsList.removeOne(savedBill.getName());
                     }
                 }
             }
@@ -853,10 +913,11 @@ void MainWindow::updateConfigFromUI()
         // Set the group label as the bill name
         m_settings.beginGroup(currentBill.getName());
 
-        // Write the bill amount due, due date, and status key-value pairs to the config file
+        // Write the bill amount due, due date, funding status, and payment status key-value pairs to the config file
         m_settings.setValue(m_BILL_AMOUNT_DUE_KEY, currentBill.getAmountDue());
         m_settings.setValue(m_BILL_DUE_DATE_KEY, currentBill.getDueDate().toString(m_DATE_STRING_FORMAT));
         m_settings.setValue(m_BILL_FUNDING_STATUS_KEY, fundingStatusBooleanToString(currentBill.isFunded()));
+        m_settings.setValue(m_BILL_PAYMENT_STATUS_KEY, paymentStatusBooleanToString(currentBill.isPaid()));
         m_settings.endGroup();
     }
 
@@ -952,6 +1013,23 @@ void MainWindow::deleteBillOnClick()
 
                 // Update the amount available line edit
                 m_amountAvailableEdit->setText(QString::number(m_totalAmountAvailable, 'f', 2));
+
+                // Remove this bill from the funded bill list by accessing the bill's name in the first column
+                m_fundedBillsList.removeOne(m_billTableWidget->item(row, 0)->text());
+            }
+
+            // Retrieve the payment status combo box found in the fourth column
+            QComboBox *paymentStatusBox;
+            paymentStatusBox = (QComboBox*)m_billTableWidget->cellWidget(row, 4);
+
+            // If the funding status is marked as funded
+            if(paymentStatusBox->currentText() == m_PAID_STRING)
+            {
+                // Subtract the bill's amount due from the total amount spent by accessing the bill's amount due in the second column
+                m_totalAmountSpent-= m_billTableWidget>item(row, 1)->text().toDouble();
+
+                // Update the amount spent line edit
+                m_amountAvailableEdit->setText(QString::number(m_totalAmountSpent, 'f', 2));
 
                 // Remove this bill from the funded bill list by accessing the bill's name in the first column
                 m_fundedBillsList.removeOne(m_billTableWidget->item(row, 0)->text());

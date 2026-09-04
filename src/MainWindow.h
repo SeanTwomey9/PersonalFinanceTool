@@ -188,6 +188,20 @@ private:
     bool fundingStatusStringToBoolean(QString p_fundingStatus);
 
     /**
+     * @brief Checks a payment status and returns "Paid" or "Not Paid" if the status is true or false respectively.
+     * @param p_isBillPaid - Payment status as a boolean, true or false.
+     * @return The payment status as a string.
+     */
+    QString paymentStatusBooleanToString(bool p_isBillPaid);
+
+    /**
+     * @brief Checks a payment status and returns true or false if the status is "Paid" or "Not Paid" respectively.
+     * @param p_paymentStatus - Payment status as a string, "Paid" or "Not Paid".
+     * @return The funding status as a boolean.
+     */
+    bool paymentStatusStringToBoolean(QString p_paymentStatus);
+
+    /**
      * @brief Converts a date represented as a string into a date object in the appropriate "M/d/yyyy" format.
      * @param p_dateString - A date represented as a string.
      * @return The input string as a date object in "M/d/yyyy" format.
@@ -282,6 +296,7 @@ private:
     const int m_NUM_DECIMAL_PLACES = 2; //!< The number of decimal places allowed in the total amount available input box.
     double m_AMOUNT_AVAILABLE_STEP_SIZE = 1.00; //!< The step size for the up and down arrows in the total amount available input box.
     double m_totalAmountAvailable = 0.00; //!< The total amount of money the user has available, defaulted to zero dollars.
+    double m_totalAmountSpent = 0.00; //!< The total amount of money the user has spent, defaulted to zero dollars.
 
     // Config file content strings
     QSettings m_settings; //!< The QSettings object which reads and writes to the configuration file.
@@ -316,6 +331,8 @@ private:
     // Amount avaiable UI objects
     QLabel *m_amountAvailableLabel = nullptr; //!< The label for the total amount available.
     QLineEdit *m_amountAvailableEdit = nullptr; //!< The input field for the total amount available, initially set to the user's amount available but can be edited.
+    QLineEdit *m_amountSpentLabel = nullptr; //!< The label for the total amount spent.
+    QLineEdit *m_amountSpentEdit = nullptr; //!< The input field for the total amount spent, initially set to zero dollars but can be edited.
 
     // Buttons used for manipulating the bill table widget
     QPushButton *m_saveButton = nullptr; //!< Button used to save the current state of the tool to the configuration file for subsequent launches of the application.
@@ -330,6 +347,7 @@ private:
     // Data structures used for storing bill information
     QMap<QString, Bill> m_billMap; //!< Map which stores (key, value) pairs of (the names of bills, corresponding bill objects).
     QList<QString> m_fundedBillsList; //!< List which holds the currently funded bills.
+    QList<QString> m_paidBillsList; //!< List which holds the currently paid bills.
 
     // Miscellaneous variables
     const QString m_FUNDED_STRING = "Funded"; //!< Funded status of funded represented as a string.
